@@ -1,0 +1,340 @@
+{
+  "info": {
+    "name": "Clase 1 - TODO API",
+    "_postman_id": "clase1-todo-api",
+    "description": "Colección de requests para las prácticas de Clase 1: Spring Boot TODO API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Práctica 1 - Hola Mundo",
+      "item": [
+        {
+          "name": "GET Hello",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hello",
+              "host": ["{{base_url}}"],
+              "path": ["hello"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Práctica 2 - Parámetros",
+      "item": [
+        {
+          "name": "GET Hello con Path Variable",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/hello/Juan",
+              "host": ["{{base_url}}"],
+              "path": ["api", "hello", "Juan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Greet con Query Param",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/greet?name=Maria",
+              "host": ["{{base_url}}"],
+              "path": ["api", "greet"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Maria"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/user/123/profile/settings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "123", "profile", "settings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Search con Múltiples Params",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/search?query=spring&page=2&size=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "spring"
+                },
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Práctica 3 - TODO API CRUD",
+      "item": [
+        {
+          "name": "GET All Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Task by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Estudiar Docker\",\n  \"completed\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Aprender Spring Boot - Completado\",\n  \"completed\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "2"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Filter Tasks by Completed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/filter?completed=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "filter"],
+              "query": [
+                {
+                  "key": "completed",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Task Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Práctica 4 - Actuator",
+      "item": [
+        {
+          "name": "GET Actuator Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator",
+              "host": ["{{base_url}}"],
+              "path": ["actuator"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/health",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/info",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "info"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "metrics"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Specific Metric - JVM Memory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/metrics/jvm.memory.used",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "metrics", "jvm.memory.used"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Specific Metric - HTTP Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/metrics/http.server.requests",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "metrics", "http.server.requests"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Env (Dev only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/env",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "env"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

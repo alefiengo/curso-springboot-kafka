@@ -1,0 +1,146 @@
+<mxfile host="app.diagrams.net" modified="2025-10-20T00:00:00.000Z" agent="Claude Code" version="24.0.0">
+  <diagram name="Spring Boot Startup" id="springboot-startup">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Título -->
+        <mxCell id="titulo" value="Flujo de Inicio de Aplicación Spring Boot" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="175" y="40" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Step 1 -->
+        <mxCell id="step1-box" value="1. main() ejecuta" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="100" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-code" value="SpringApplication.run(&#xa;  Application.class, args)" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="570" y="105" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow1" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="150" as="sourcePoint" />
+            <mxPoint x="424.5" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 2 -->
+        <mxCell id="step2-box" value="2. Crea ApplicationContext" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="180" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-desc" value="Contenedor IoC de Spring" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="570" y="190" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow2" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="230" as="sourcePoint" />
+            <mxPoint x="424.5" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 3 -->
+        <mxCell id="step3-box" value="3. Component Scan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="260" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-desc" value="Busca @Component&#xa;@Service, @Repository&#xa;@RestController" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="570" y="260" width="200" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow3" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="310" as="sourcePoint" />
+            <mxPoint x="424.5" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 4 -->
+        <mxCell id="step4-box" value="4. Crea Beans" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="340" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-desc" value="Instancia clases&#xa;anotadas como beans" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="570" y="345" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow4" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="390" as="sourcePoint" />
+            <mxPoint x="424.5" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 5 -->
+        <mxCell id="step5-box" value="5. Inyecta Dependencias" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="420" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-desc" value="Resuelve dependencias&#xa;entre beans" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="570" y="425" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow5" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="470" as="sourcePoint" />
+            <mxPoint x="424.5" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 6 -->
+        <mxCell id="step6-box" value="6. Auto-configuración" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="500" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-desc" value="Configura automáticamente:&#xa;• Tomcat&#xa;• Jackson (JSON)&#xa;• DispatcherServlet" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="570" y="495" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow6" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="550" as="sourcePoint" />
+            <mxPoint x="424.5" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 7 -->
+        <mxCell id="step7-box" value="7. Inicia Tomcat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b0e3e6;strokeColor=#0e8088;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="580" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-desc" value="Servidor embebido&#xa;escucha en puerto 8080" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="570" y="585" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="arrow7" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424.5" y="630" as="sourcePoint" />
+            <mxPoint x="424.5" y="660" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Step 8 -->
+        <mxCell id="step8-box" value="8. Aplicación Lista ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="660" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step8-log" value="Started Application in 2.5s" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontFamily=Courier New;fontColor=#009900" vertex="1" parent="1">
+          <mxGeometry x="570" y="670" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Timeline box -->
+        <mxCell id="timeline-box" value="Duración total: ~2-5 segundos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=2;align=center" vertex="1" parent="1">
+          <mxGeometry x="100" y="750" width="650" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Note -->
+        <mxCell id="note-box" value="@SpringBootApplication combina:&#xa;• @Configuration&#xa;• @EnableAutoConfiguration&#xa;• @ComponentScan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="200" height="100" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,90 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# NetBeans
+nbproject/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+# Gradle
+.gradle/
+build/
+
+# Logs
+*.log
+logs/
+
+# Spring Boot
+.spring-boot-devtools.properties
+
+# Local configuration
+**/application-local.yml
+**/application-local.properties
+
+# Docker volumes
+**/postgres-data/
+**/kafka-data/
+
+# Databases
+*.db
+*.mv.db
+
+# Backups
+*.bak
+*.backup
+*.tmp
+
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+*.crt
+
+# Coverage
+coverage/
+
+# Internal planning files
+CLAUDE.md
+PROYECTO_INTEGRADOR.md
+**/RUBRICA.md
