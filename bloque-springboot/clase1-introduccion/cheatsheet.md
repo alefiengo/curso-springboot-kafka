@@ -1,402 +1,284 @@
-# Cheatsheet - Clase 1: Spring Boot Fundamentals
+# Cheatsheet - Clase 1: Setup y Fundamentos
 
-Referencia rápida de comandos, anotaciones y conceptos de la Clase 1.
+Referencia rápida de comandos esenciales para configurar tu entorno de desarrollo.
 
 ---
 
-## Comandos Maven Esenciales
+## Verificación de Instalación
 
 ```bash
-# Crear proyecto con Spring Initializr CLI
-curl https://start.spring.io/starter.zip \
-  -d dependencies=web,devtools,actuator \
-  -d groupId=dev.alefiengo \
-  -d artifactId=demo-app \
-  -d javaVersion=17 \
-  -o demo-app.zip && unzip demo-app.zip
+# Verificar Java
+java -version
+javac -version
+# Debe mostrar: openjdk version "17.0.x" o superior
 
-# Compilar y ejecutar
-mvn clean compile
+# Verificar Maven
+mvn -version
+# Debe mostrar: Apache Maven 3.9.x o superior
+
+# Verificar Git
+git --version
+
+# Ver variables de entorno (opcional)
+echo $JAVA_HOME   # Linux/macOS
+echo %JAVA_HOME%  # Windows
+```
+
+---
+
+## Comandos Maven Básicos
+
+```bash
+# Compilar proyecto
+mvn compile
+
+# Ejecutar aplicación Spring Boot
 mvn spring-boot:run
 
-# Con perfil específico
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+# Limpiar archivos compilados
+mvn clean
 
-# Empaquetar y ejecutar JAR
+# Compilar + empaquetar JAR
 mvn clean package
-java -jar target/demo-app-0.0.1-SNAPSHOT.jar
 
-# Skip tests
-mvn clean install -DskipTests
+# Ver árbol de dependencias
+mvn dependency:tree
+
+# Descargar dependencias
+mvn dependency:resolve
 ```
 
 ---
 
-## Anotaciones Principales
+## Comandos Git Básicos
 
-### Clase Principal
+```bash
+# Inicializar repositorio
+git init
 
-```java
-@SpringBootApplication
-public class DemoApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-    }
-}
-```
+# Configurar usuario
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@email.com"
 
-### Controllers
+# Ver configuración
+git config --list
 
-```java
-@RestController
-@RequestMapping("/api")
-public class TaskController {
+# Agregar archivos
+git add .
+git add archivo.java
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello, World!";
-    }
+# Hacer commit
+git commit -m "mensaje descriptivo"
 
-    @GetMapping("/tasks")
-    public List<Task> getTasks() { }
+# Ver estado
+git status
 
-    @GetMapping("/tasks/{id}")
-    public Task getTask(@PathVariable Long id) { }
+# Ver historial
+git log --oneline
 
-    @PostMapping("/tasks")
-    public Task createTask(@RequestBody Task task) { }
-
-    @PutMapping("/tasks/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task task) { }
-
-    @DeleteMapping("/tasks/{id}")
-    public void deleteTask(@PathVariable Long id) { }
-}
-```
-
-**Anotaciones:**
-- `@RestController` - Controlador que retorna datos JSON
-- `@RequestMapping` - Prefijo de ruta para todo el controlador
-- `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` - Mapeo HTTP
-- `@PathVariable` - Captura variables de ruta `/tasks/{id}`
-- `@RequestParam` - Captura query parameters `?name=value`
-- `@RequestBody` - Deserializa JSON a objeto Java
-
-### Services
-
-```java
-@Service
-public class TaskService {
-
-    private List<Task> tasks = new ArrayList<>();
-
-    public List<Task> getAllTasks() {
-        return tasks;
-    }
-
-    public Task createTask(Task task) {
-        tasks.add(task);
-        return task;
-    }
-}
-```
-
-### Inyección de Dependencias
-
-```java
-@RestController
-public class TaskController {
-
-    private final TaskService taskService;
-
-    // Constructor injection (recomendado)
-    public TaskController(TaskService taskService) {
-        this.taskService = taskService;
-    }
-}
+# Crear repositorio remoto y subir
+git remote add origin https://github.com/usuario/repo.git
+git branch -M main
+git push -u origin main
 ```
 
 ---
 
-## Modelo (POJO)
+## Estructura de Proyecto Maven
 
-```java
-public class Task {
-    private Long id;
-    private String title;
-    private boolean completed;
-
-    // Constructor vacío
-    public Task() {}
-
-    // Constructor completo
-    public Task(Long id, String title, boolean completed) {
-        this.id = id;
-        this.title = title;
-        this.completed = completed;
-    }
-
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    // ... resto de getters/setters
-}
 ```
-
-**Con Records (Java 14+):**
-```java
-public record Task(Long id, String title, boolean completed) {}
+mi-proyecto/
+├── src/
+│   ├── main/
+│   │   ├── java/              # Código fuente Java
+│   │   │   └── dev/alefiengo/app/
+│   │   │       └── Application.java
+│   │   └── resources/         # Archivos de configuración
+│   │       └── application.properties
+│   └── test/
+│       └── java/              # Tests
+├── target/                    # Archivos compilados (generado)
+├── pom.xml                    # Configuración Maven
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## Configuración (application.yml)
-
-```yaml
-server:
-  port: 8080
-
-spring:
-  application:
-    name: demo-app
-
-# Actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
-
-# Info personalizado
-info:
-  app:
-    name: Demo API
-    version: 1.0.0
-```
-
----
-
-## Dependencias Maven (pom.xml)
+## Archivo pom.xml (Estructura Básica)
 
 ```xml
-<dependencies>
-    <!-- Spring Web -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
 
-    <!-- DevTools (hot reload) -->
-    <dependency>
+    <parent>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-devtools</artifactId>
-        <scope>runtime</scope>
-    </dependency>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.x.x</version>
+    </parent>
 
-    <!-- Actuator -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
+    <groupId>dev.alefiengo</groupId>
+    <artifactId>mi-proyecto</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Mi Proyecto</name>
 
-    <!-- Test -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
 
 ---
 
-## Códigos de Estado HTTP
-
-| Código | Descripción | Uso |
-|--------|-------------|-----|
-| 200 | OK | GET, PUT exitoso |
-| 201 | Created | POST exitoso |
-| 204 | No Content | DELETE exitoso |
-| 400 | Bad Request | Datos inválidos |
-| 404 | Not Found | Recurso no existe |
-| 500 | Internal Error | Error del servidor |
-
-### Retornar códigos personalizados
+## Clase Principal Spring Boot
 
 ```java
-@PostMapping("/tasks")
-public ResponseEntity<Task> createTask(@RequestBody Task task) {
-    Task created = taskService.createTask(task);
-    return ResponseEntity.status(HttpStatus.CREATED).body(created);
-}
+package dev.alefiengo.miapp;
 
-@GetMapping("/tasks/{id}")
-public ResponseEntity<Task> getTask(@PathVariable Long id) {
-    Task task = taskService.getTaskById(id);
-    if (task == null) {
-        return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(task);
-}
-```
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
----
-
-## Estructura de Proyecto
-
-```
-src/
-├── main/
-│   ├── java/dev/alefiengo/demoapp/
-│   │   ├── DemoAppApplication.java
-│   │   ├── controller/
-│   │   │   └── TaskController.java
-│   │   ├── service/
-│   │   │   └── TaskService.java
-│   │   └── model/
-│   │       └── Task.java
-│   └── resources/
-│       └── application.yml
-└── test/
-    └── java/dev/alefiengo/demoapp/
-        └── DemoAppApplicationTests.java
-```
-
----
-
-## Actuator Endpoints
-
-```bash
-# Health check
-curl http://localhost:8080/actuator/health
-
-# Info
-curl http://localhost:8080/actuator/info
-
-# Métricas
-curl http://localhost:8080/actuator/metrics
-curl http://localhost:8080/actuator/metrics/http.server.requests
-```
-
----
-
-## Probar API con curl
-
-```bash
-# GET - Listar
-curl http://localhost:8080/tasks
-
-# GET - Por ID
-curl http://localhost:8080/tasks/1
-
-# POST - Crear
-curl -X POST http://localhost:8080/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Aprender Spring Boot","completed":false}'
-
-# PUT - Actualizar
-curl -X PUT http://localhost:8080/tasks/1 \
-  -H "Content-Type: application/json" \
-  -d '{"id":1,"title":"Aprender Spring Boot","completed":true}'
-
-# DELETE - Eliminar
-curl -X DELETE http://localhost:8080/tasks/1
-```
-
----
-
-## Mejores Prácticas
-
-### Naming Conventions
-
-- **Clases**: `PascalCase` → `TaskController`, `TaskService`
-- **Métodos**: `camelCase` → `getAllTasks()`, `createTask()`
-- **Constantes**: `UPPER_SNAKE_CASE` → `MAX_TASKS`, `DEFAULT_PORT`
-- **Packages**: `lowercase` → `controller`, `service`, `model`
-
-### REST API Design
-
-```bash
-# BUENO
-GET    /tasks
-GET    /tasks/{id}
-POST   /tasks
-PUT    /tasks/{id}
-DELETE /tasks/{id}
-
-# MALO
-GET    /getTasks
-POST   /createTask
-GET    /tasks/delete/{id}
-```
-
-### Separación de Responsabilidades
-
-```java
-// BUENO
-@RestController
-public class TaskController {
-    private final TaskService service;
-
-    @GetMapping("/tasks")
-    public List<Task> getTasks() {
-        return service.getAllTasks();  // Delega al servicio
+@SpringBootApplication
+public class MiAppApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MiAppApplication.class, args);
     }
 }
+```
 
-// MALO
-@RestController
-public class TaskController {
-    private List<Task> tasks = new ArrayList<>();
+**¿Qué hace @SpringBootApplication?**
+- Combina 3 anotaciones: @Configuration, @EnableAutoConfiguration, @ComponentScan
+- Habilita auto-configuración de Spring Boot
+- Escanea componentes en el paquete actual y subpaquetes
 
-    @GetMapping("/tasks")
-    public List<Task> getTasks() {
-        return tasks;  // Lógica en el controlador
-    }
-}
+---
+
+## .gitignore Recomendado
+
+```gitignore
+# Maven
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Local config
+application-local.properties
+application-local.yml
 ```
 
 ---
 
 ## Troubleshooting Común
 
-### Puerto ya en uso
+### Error: "java: invalid source release: 17"
 
-**Error:**
-```
-Web server failed to start. Port 8080 was already in use.
-```
+**Causa**: IntelliJ no está usando JDK 17
 
-**Solución:**
-```yaml
-# application.yml
-server:
-  port: 8081
-```
+**Solución**:
+1. File → Project Structure → Project → SDK: 17
+2. File → Settings → Build, Execution, Deployment → Compiler → Java Compiler → Project bytecode version: 17
 
-### Bean no encontrado
+---
 
-**Error:**
-```
-Parameter 0 of constructor in TaskController required a bean of type 'TaskService' that could not be found.
-```
+### Error: "JAVA_HOME is not set"
 
-**Solución:** Asegúrate que `TaskService` tenga `@Service`:
-```java
-@Service
-public class TaskService { }
+**Causa**: Variable de entorno JAVA_HOME no configurada
+
+**Solución Linux/macOS**:
+```bash
+export JAVA_HOME=/path/to/jdk-17
+export PATH=$JAVA_HOME/bin:$PATH
 ```
 
-### 404 Not Found en endpoint
+**Solución Windows**:
+1. Panel de Control → Sistema → Variables de entorno
+2. Nueva variable de sistema: `JAVA_HOME` = `C:\Program Files\Java\jdk-17`
+3. Agregar a PATH: `%JAVA_HOME%\bin`
 
-**Verificar:**
-1. Método tiene `@GetMapping`, `@PostMapping`, etc.
-2. Clase tiene `@RestController`
-3. Ruta es correcta (case-sensitive)
-4. Aplicación corriendo en puerto correcto
+---
+
+### Error: "mvn: command not found"
+
+**Causa**: Maven no está en PATH
+
+**Solución**:
+1. Verifica instalación: busca carpeta de Maven
+2. Agrega a PATH:
+   ```bash
+   export PATH=/path/to/maven/bin:$PATH  # Linux/macOS
+   ```
+
+---
+
+### Error: "Failed to execute goal... package does not exist"
+
+**Causa**: Falta dependencia en pom.xml
+
+**Solución**:
+1. Verifica que la dependencia esté en `<dependencies>`
+2. Ejecuta: `mvn clean install`
+3. Refresca proyecto en IDE (Reimport)
+
+---
+
+### Aplicación no inicia: "Port 8080 was already in use"
+
+**Causa**: Otra aplicación usando puerto 8080
+
+**Solución**:
+
+**Opción 1**: Detener aplicación anterior
+```bash
+# Linux/macOS
+lsof -ti:8080 | xargs kill -9
+
+# Windows
+netstat -ano | findstr :8080
+taskkill /PID <PID> /F
+```
+
+**Opción 2**: Cambiar puerto en `application.properties`
+```properties
+server.port=8081
+```
 
 ---
 
@@ -404,27 +286,98 @@ public class TaskService { }
 
 | Término Español | English Term | Descripción |
 |-----------------|--------------|-------------|
-| Microservicio | Microservice | Aplicación pequeña e independiente |
-| Punto final / Endpoint | Endpoint | URL que expone un recurso REST |
-| Controlador | Controller | Capa que maneja peticiones HTTP |
-| Servicio | Service | Capa de lógica de negocio |
-| Modelo | Model | Representación de datos |
-| Inyección de dependencias | Dependency Injection | Patrón para desacoplar componentes |
-| Anotación | Annotation | Metadato en código Java (`@RestController`) |
-| Contenedor | Container | Spring IoC Container (gestor de beans) |
-| Bean | Bean | Objeto gestionado por Spring |
-| Actuador | Actuator | Herramienta de monitoreo de Spring Boot |
-| Perfil | Profile | Configuración por entorno (dev, prod) |
-| POJO | POJO | Plain Old Java Object (clase simple) |
-| DTO | DTO | Data Transfer Object |
-| Arranque | Bootstrap | Inicio de la aplicación |
-| Servidor embebido | Embedded Server | Tomcat integrado en Spring Boot |
+| Microservicio | Microservice | Aplicación pequeña e independiente con una responsabilidad específica |
+| Spring Boot | Spring Boot | Framework que simplifica desarrollo Spring con auto-configuración |
+| Maven | Maven | Herramienta de gestión de proyectos y construcción para Java |
+| Dependencia | Dependency | Biblioteca externa que tu proyecto necesita |
+| Artefacto | Artifact | Resultado del build (JAR, WAR) |
+| POM | Project Object Model | Archivo XML que configura proyecto Maven (pom.xml) |
+| Starter | Starter | Dependencia que agrupa otras relacionadas (ej: spring-boot-starter-web) |
+| Empaquetado | Packaging | Formato del artefacto final (jar, war) |
+| Servidor embebido | Embedded Server | Tomcat incluido en JAR, no requiere instalación externa |
+| Auto-configuración | Auto-configuration | Spring Boot configura automáticamente según dependencias |
+
+---
+
+## Conceptos Clave de Microservicios
+
+**Microservicio:**
+- Aplicación pequeña, independiente
+- Una responsabilidad (Single Responsibility Principle)
+- Desplegable de forma independiente
+- Comunica vía APIs (HTTP/REST, mensajería)
+
+**Características:**
+- Independencia tecnológica
+- Escalabilidad horizontal
+- Resiliencia (fallo aislado)
+- Facilita CI/CD
+
+**Spring Boot para Microservicios:**
+- Embedded server (no necesita Tomcat externo)
+- Auto-configuración (menos código)
+- Starter dependencies (fácil setup)
+- Actuator (monitoreo)
+
+---
+
+## Spring Initializr
+
+**Web:** https://start.spring.io/
+
+**Configuración típica:**
+- Project: Maven
+- Language: Java
+- Spring Boot: 3.x (última estable)
+- Group: `dev.alefiengo`
+- Artifact: nombre-proyecto
+- Packaging: Jar
+- Java: 17
+
+**Dependencies básicas:**
+- Spring Web (REST APIs)
+- Spring Boot DevTools (hot reload)
+- Spring Boot Actuator (monitoreo)
+
+---
+
+## Comandos Útiles del Sistema
+
+```bash
+# Ver procesos Java corriendo
+jps
+
+# Ver uso de puerto
+netstat -an | grep 8080    # Linux/macOS
+netstat -an | findstr 8080 # Windows
+
+# Limpiar caché Maven
+rm -rf ~/.m2/repository
+
+# Ver versión de dependencias
+mvn versions:display-dependency-updates
+```
 
 ---
 
 ## Recursos Adicionales
 
+### Documentación Oficial
 - [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/html/)
-- [Spring Guides](https://spring.io/guides)
-- [Baeldung Spring Boot](https://www.baeldung.com/spring-boot)
-- [REST API Design](https://restfulapi.net/)
+- [Maven Docs](https://maven.apache.org/guides/)
+- [Git Docs](https://git-scm.com/doc)
+
+### Tutoriales
+- [Spring Boot Getting Started](https://spring.io/guides/gs/spring-boot/)
+- [Maven in 5 Minutes](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
+
+### Herramientas
+- [Spring Initializr](https://start.spring.io/)
+- [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+- [Git Documentation](https://git-scm.com/)
+
+---
+
+**Nota:** Este cheatsheet cubre solo lo visto en Clase 1 (setup y fundamentos). Se expandirá en clases siguientes.
+
+[← Volver a Clase 1](README.md)

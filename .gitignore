@@ -84,7 +84,5 @@ logs/
 # Coverage
 coverage/
 
-# Internal planning files
+# Internal planning
 CLAUDE.md
-PROYECTO_INTEGRADOR.md
-**/RUBRICA.md

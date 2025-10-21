@@ -1,404 +1,419 @@
-# FAQ - Preguntas Frecuentes: Clase 1
+# FAQ - Clase 1: Preguntas Frecuentes
 
-Respuestas a los problemas más comunes encontrados en la Clase 1.
+Soluciones a problemas comunes de instalación y configuración del entorno.
 
 ---
 
 ## Problemas de Instalación
 
-### ❓ "java: command not found"
+### "java: command not found"
 
-**Problema:** Java no está instalado o no está en el PATH.
+**Causa**: Java no está instalado o no está en el PATH del sistema.
 
-**Solución:**
+**Solución**:
 
-1. Verificar instalación:
+1. Verifica si Java está instalado:
+   ```bash
+   which java    # Linux/macOS
+   where java    # Windows
+   ```
+
+2. Si no está instalado, descarga e instala JDK 17:
+   - OpenJDK: https://adoptium.net/
+   - Oracle JDK: https://www.oracle.com/java/technologies/downloads/
+
+3. Configura JAVA_HOME:
+   ```bash
+   # Linux/macOS (.bashrc o .zshrc)
+   export JAVA_HOME=/path/to/jdk-17
+   export PATH=$JAVA_HOME/bin:$PATH
+
+   # Windows (Variables de entorno)
+   JAVA_HOME=C:\Program Files\Java\jdk-17
+   PATH=%JAVA_HOME%\bin;%PATH%
+   ```
+
+4. Reinicia la terminal y verifica:
+   ```bash
+   java -version
+   ```
+
+---
+
+### "mvn: command not found"
+
+**Causa**: Maven no está instalado o no está en el PATH.
+
+**Solución**:
+
+1. Descarga Maven: https://maven.apache.org/download.cgi
+
+2. Descomprime en un directorio (ej: `/opt/maven` o `C:\Program Files\Maven`)
+
+3. Configura PATH:
+   ```bash
+   # Linux/macOS
+   export PATH=/path/to/maven/bin:$PATH
+
+   # Windows
+   PATH=C:\Program Files\Maven\bin;%PATH%
+   ```
+
+4. Verifica:
+   ```bash
+   mvn -version
+   ```
+
+---
+
+### "JAVA_HOME is not set"
+
+**Causa**: Variable de entorno JAVA_HOME no está configurada.
+
+**Solución Linux/macOS**:
 ```bash
-java -version
-```
+# Encuentra la ubicación de Java
+/usr/libexec/java_home -V  # macOS
+which java                  # Linux
 
-2. Si no está instalado:
-   - **macOS:** `brew install openjdk@17`
-   - **Linux (Ubuntu/Debian):** `sudo apt install openjdk-17-jdk`
-   - **Windows:** Descargar de [adoptium.net](https://adoptium.net/)
-
-3. Configurar JAVA_HOME:
-```bash
-# Linux/macOS (~/.bashrc o ~/.zshrc)
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+# Agrega a .bashrc o .zshrc
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home  # macOS
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk                                # Linux
 export PATH=$JAVA_HOME/bin:$PATH
 
-# Windows (Variables de entorno del sistema)
-JAVA_HOME=C:\Program Files\Java\jdk-17
-Path=%JAVA_HOME%\bin;%Path%
+# Recarga configuración
+source ~/.bashrc
 ```
+
+**Solución Windows**:
+1. Panel de Control → Sistema → Configuración avanzada del sistema
+2. Variables de entorno → Nuevo (Variables del sistema)
+3. Nombre: `JAVA_HOME`
+4. Valor: `C:\Program Files\Java\jdk-17` (tu ruta)
+5. Edita PATH y agrega: `%JAVA_HOME%\bin`
+6. Reinicia terminal (cmd/PowerShell)
 
 ---
 
-### ❓ "mvn: command not found"
+### IntelliJ IDEA no reconoce JDK 17
 
-**Problema:** Maven no está instalado.
+**Causa**: IDE no está configurado para usar el JDK correcto.
 
-**Solución:**
+**Solución**:
 
-**Opción 1:** Usar Maven Wrapper (viene con proyectos de Spring Initializr)
-```bash
-./mvnw spring-boot:run   # Linux/macOS
-mvnw.cmd spring-boot:run # Windows
-```
+1. File → Project Structure (Ctrl+Alt+Shift+S)
+2. Project → SDK → Add SDK → Download JDK
+3. Selecciona versión 17, vendor: Temurin (recomendado)
+4. Aplica cambios
 
-**Opción 2:** Instalar Maven
-- **macOS:** `brew install maven`
-- **Linux:** `sudo apt install maven`
-- **Windows:** Descargar de [maven.apache.org](https://maven.apache.org/)
-
----
-
-## Problemas al Ejecutar
-
-### ❓ "Port 8080 was already in use"
-
-**Problema:** El puerto 8080 ya está ocupado por otra aplicación.
-
-**Solución 1:** Cambiar el puerto en `application.yml`:
-```yaml
-server:
-  port: 8081  # O cualquier otro puerto libre
-```
-
-**Solución 2:** Encontrar y detener el proceso que usa el puerto:
-```bash
-# Linux/macOS
-lsof -i :8080
-kill -9 <PID>
-
-# Windows
-netstat -ano | findstr :8080
-taskkill /PID <PID> /F
-```
+**O usar JDK ya instalado**:
+1. File → Project Structure → SDK → Add SDK → JDK
+2. Navega a tu instalación de JDK 17
+3. OK → Apply
 
 ---
 
-### ❓ "Failed to execute goal org.springframework.boot:spring-boot-maven-plugin"
+### Error: "java: invalid source release: 17"
 
-**Problema:** Maven no puede ejecutar el plugin de Spring Boot.
+**Causa**: Proyecto configurado para usar Java 17 pero el IDE/Maven usa otra versión.
 
-**Solución:**
+**Solución en IntelliJ**:
+1. File → Settings → Build, Execution, Deployment → Compiler → Java Compiler
+2. Project bytecode version: 17
+3. File → Project Structure → Project → SDK: 17
 
-1. Limpia el proyecto:
-```bash
-mvn clean
-```
-
-2. Vuelve a intentar:
-```bash
-mvn spring-boot:run
-```
-
-3. Si persiste, borra la carpeta `.m2`:
-```bash
-rm -rf ~/.m2/repository
-mvn clean install
-```
-
----
-
-### ❓ "Application run failed - ClassNotFoundException"
-
-**Problema:** Clase principal no encontrada.
-
-**Solución:**
-
-Verifica que tu clase principal tenga `@SpringBootApplication`:
-```java
-@SpringBootApplication
-public class DemoApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-    }
-}
-```
-
----
-
-## Problemas de Código
-
-### ❓ "Required a bean of type 'TaskService' that could not be found"
-
-**Problema:** Spring no puede inyectar el servicio.
-
-**Solución:**
-
-Asegúrate que tu servicio tenga `@Service`:
-```java
-@Service  // ← No olvides esta anotación
-public class TaskService {
-    // ...
-}
-```
-
----
-
-### ❓ "Whitelabel Error Page - 404 Not Found"
-
-**Problema:** El endpoint no existe o la ruta es incorrecta.
-
-**Checklist:**
-1. ¿El método tiene `@GetMapping` o similar?
-2. ¿La clase tiene `@RestController`?
-3. ¿La ruta es correcta? (case-sensitive)
-4. ¿La aplicación está corriendo?
-5. ¿Estás probando en el puerto correcto?
-
-**Ejemplo correcto:**
-```java
-@RestController
-public class TaskController {
-
-    @GetMapping("/tasks")  // ← No olvides la anotación
-    public List<Task> getTasks() {
-        return List.of();
-    }
-}
-```
-
----
-
-### ❓ "Cannot resolve symbol 'RestController'"
-
-**Problema:** Imports faltantes.
-
-**Solución:**
-
-Agrega los imports necesarios:
-```java
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-```
-
-**En IntelliJ/Eclipse:** `Alt + Enter` sobre el error y selecciona "Import class"
-
----
-
-## 📦 Problemas con Maven
-
-### ❓ "Could not resolve dependencies"
-
-**Problema:** Maven no puede descargar dependencias.
-
-**Solución:**
-
-1. Verifica conexión a internet
-
-2. Limpia y reconstruye:
-```bash
-mvn clean install -U
-```
-
-3. Si usas proxy, configura en `~/.m2/settings.xml`:
+**Solución en pom.xml**:
+Verifica que tenga:
 ```xml
+<properties>
+    <java.version>17</java.version>
+</properties>
+```
+
+---
+
+## Problemas al Crear Proyecto
+
+### Spring Initializr no descarga el ZIP
+
+**Causa**: Problema de red o configuración de proxy.
+
+**Solución**:
+1. Verifica tu conexión a internet
+2. Intenta con otro navegador
+3. Usa IntelliJ IDEA directamente: File → New → Project → Spring Initializr
+
+---
+
+### "Cannot resolve Spring Boot dependencies" en IntelliJ
+
+**Causa**: Maven no pudo descargar dependencias.
+
+**Solución**:
+1. Verifica conexión a internet
+2. Click derecho en proyecto → Maven → Reload Project
+3. Si persiste: File → Invalidate Caches → Invalidate and Restart
+
+---
+
+### Maven descarga es muy lenta
+
+**Causa**: Servidor Maven central puede ser lento dependiendo de tu ubicación.
+
+**Solución**:
+Usar un mirror (opcional):
+```xml
+<!-- En ~/.m2/settings.xml -->
 <settings>
-  <proxies>
-    <proxy>
-      <host>proxy.company.com</host>
-      <port>8080</port>
-    </proxy>
-  </proxies>
+  <mirrors>
+    <mirror>
+      <id>aliyun-maven</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Aliyun Maven</name>
+      <url>https://maven.aliyun.com/repository/central</url>
+    </mirror>
+  </mirrors>
 </settings>
 ```
 
 ---
 
-### ❓ "Build Success but application doesn't start"
+## Problemas al Ejecutar
 
-**Problema:** Compilación correcta pero no ejecuta.
+### "Port 8080 was already in use"
 
-**Solución:**
+**Causa**: Otra aplicación está usando el puerto 8080.
 
-Usa el plugin correcto:
+**Solución**:
+
+**Opción 1 - Detener proceso anterior**:
 ```bash
-# CORRECTO
-mvn spring-boot:run
+# Linux/macOS
+lsof -ti:8080 | xargs kill -9
 
-# INCORRECTO
-mvn run
-mvn start
+# Windows
+netstat -ano | findstr :8080
+# Anota el PID y luego:
+taskkill /PID <número> /F
+```
+
+**Opción 2 - Cambiar puerto**:
+Crea `src/main/resources/application.properties`:
+```properties
+server.port=8081
 ```
 
 ---
 
-## 🌐 Problemas con Postman / curl
+### "Failed to execute goal org.springframework.boot:spring-boot-maven-plugin"
 
-### ❓ "Could not get any response" en Postman
+**Causa**: Problema con el plugin de Maven o dependencias faltantes.
 
-**Problema:** No puede conectar con la aplicación.
-
-**Checklist:**
-1. ¿La aplicación está corriendo? (ver logs)
-2. ¿La URL es correcta? (`http://localhost:8080`)
-3. ¿El puerto es el correcto?
-4. ¿Hay firewall bloqueando?
-
----
-
-### ❓ "415 Unsupported Media Type" en POST
-
-**Problema:** Falta Content-Type header.
-
-**Solución en Postman:**
-1. Selecciona la pestaña "Body"
-2. Elige "raw"
-3. Selecciona "JSON" en el dropdown
-4. Verifica que el header `Content-Type: application/json` esté presente
-
-**Solución en curl:**
+**Solución**:
 ```bash
-curl -X POST http://localhost:8080/tasks \
-  -H "Content-Type: application/json" \  # ← Importante
-  -d '{"title":"Task 1","completed":false}'
+# Limpiar y reinstalar
+mvn clean install
+
+# Si falla, eliminar caché de Maven
+rm -rf ~/.m2/repository/org/springframework/boot
+mvn clean install
 ```
 
 ---
 
-### ❓ "400 Bad Request" al enviar JSON
+### "Application run failed - ClassNotFoundException"
 
-**Problema:** JSON malformado o campos incorrectos.
+**Causa**: Clase principal no se encuentra o ruta incorrecta en pom.xml.
 
-**Solución:**
-
-Verifica el JSON:
-```json
-{
-  "title": "Aprender Spring Boot",  // Comillas dobles
-  "completed": false                 // Sin comillas para boolean
-}
-```
-
-Errores comunes:
-```json
-{
-  'title': 'Test',      // Comillas simples
-  completed: 'false'    // Boolean como string
-}
-```
+**Solución**:
+1. Verifica que existe la clase con `@SpringBootApplication`
+2. Verifica en pom.xml (debe generarse automático):
+   ```xml
+   <build>
+       <plugins>
+           <plugin>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-maven-plugin</artifactId>
+           </plugin>
+       </plugins>
+   </build>
+   ```
+3. Limpia y recompila:
+   ```bash
+   mvn clean compile
+   mvn spring-boot:run
+   ```
 
 ---
 
-## 🔍 Problemas con Actuator
+### Aplicación inicia pero no responde en localhost:8080
 
-### ❓ "404 on /actuator/health"
+**Causa**: Aplicación starter vacía no tiene endpoints.
 
-**Problema:** Actuator no está configurado.
+**Explicación**: Esto es **NORMAL** en Clase 1. Creaste un proyecto vacío sin controllers. Verás "Tomcat started" pero al acceder a http://localhost:8080 obtendrás error 404.
 
-**Solución:**
+**Solución**: En Clase 2 agregaremos endpoints. Por ahora solo verifica que la aplicación inicie correctamente (sin errores en consola).
 
-1. Verifica dependencia en `pom.xml`:
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
-```
+---
 
-2. Configura en `application.yml`:
-```yaml
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-```
+## Problemas con Maven
 
-3. Reinicia la aplicación
+### "Could not resolve dependencies"
+
+**Causa**: Maven no puede descargar bibliotecas.
+
+**Solución**:
+1. Verifica conexión a internet
+2. Intenta actualizar:
+   ```bash
+   mvn clean install -U
+   ```
+   (La bandera `-U` fuerza actualización de dependencias)
+
+3. Si usa proxy corporativo, configura en `~/.m2/settings.xml`:
+   ```xml
+   <settings>
+     <proxies>
+       <proxy>
+         <id>myproxy</id>
+         <active>true</active>
+         <protocol>http</protocol>
+         <host>proxy.company.com</host>
+         <port>8080</port>
+       </proxy>
+     </proxies>
+   </settings>
+   ```
+
+---
+
+### "Build Success" pero aplicación no inicia
+
+**Causa**: Error en la configuración de la aplicación o dependencias.
+
+**Solución**:
+1. Revisa logs completos en consola
+2. Busca líneas con "ERROR" o "Exception"
+3. Verifica que pom.xml tenga al menos:
+   ```xml
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-web</artifactId>
+   </dependency>
+   ```
+
+---
+
+## Problemas con Git
+
+### "Git not found" en IntelliJ
+
+**Causa**: IntelliJ no encuentra la instalación de Git.
+
+**Solución**:
+1. File → Settings → Version Control → Git
+2. Path to Git executable: Busca y selecciona git.exe (Windows) o /usr/bin/git (Linux/macOS)
+3. Click "Test" para verificar
+
+---
+
+### No puedo hacer push a GitHub
+
+**Causa**: Autenticación fallida o repositorio remoto no configurado.
+
+**Solución**:
+1. Configura credenciales:
+   ```bash
+   git config --global user.name "Tu Nombre"
+   git config --global user.email "tu@email.com"
+   ```
+
+2. Si usa HTTPS, necesitas Personal Access Token (no password):
+   - GitHub → Settings → Developer settings → Personal access tokens
+   - Generate new token → Copia el token
+   - Úsalo como password al hacer push
+
+3. Si el repo no existe en GitHub:
+   - Crea el repositorio en GitHub primero (vacío, sin README)
+   - Luego conecta:
+     ```bash
+     git remote add origin https://github.com/usuario/repo.git
+     git branch -M main
+     git push -u origin main
+     ```
 
 ---
 
 ## Problemas Conceptuales
 
-### ❓ "¿Cuál es la diferencia entre @RestController y @Controller?"
+### ¿Por qué mi aplicación no hace nada?
 
-**Respuesta:**
-
-| Anotación | Uso | Retorna |
-|-----------|-----|---------|
-| `@Controller` | MVC (vistas HTML) | Nombres de vistas (Thymeleaf, JSP) |
-| `@RestController` | REST APIs | Datos (JSON, XML) |
-
-`@RestController` = `@Controller` + `@ResponseBody`
+**Respuesta**: En Clase 1 solo creamos el proyecto starter (esqueleto). No tiene lógica de negocio ni endpoints aún. En Clase 2 empezaremos a escribir código Java y crear endpoints REST.
 
 ---
 
-### ❓ "¿Cuándo uso @RequestParam vs @PathVariable?"
+### ¿Qué es "Tomcat started on port 8080"?
 
-**Respuesta:**
-
-**@PathVariable** - Parte de la URL:
-```java
-@GetMapping("/users/{id}")
-public User getUser(@PathVariable Long id) {
-    // URL: /users/123
-}
-```
-
-**@RequestParam** - Query string:
-```java
-@GetMapping("/users")
-public List<User> searchUsers(@RequestParam String name) {
-    // URL: /users?name=John
-}
-```
+**Respuesta**: Tomcat es el servidor web embebido en Spring Boot. El mensaje indica que tu aplicación está corriendo y escuchando en el puerto 8080. Aunque aún no tenga endpoints, el servidor está activo y listo para recibir peticiones HTTP.
 
 ---
 
-### ❓ "¿Por qué usar inyección de dependencias?"
+### ¿Debo instalar Tomcat por separado?
 
-**Respuesta:**
+**Respuesta**: NO. Spring Boot incluye Tomcat embebido. No necesitas instalar ni configurar Tomcat manualmente.
 
-**Sin inyección (acoplado):**
-```java
-public class TaskController {
-    private TaskService service = new TaskService();  // Acoplado
-}
-```
+---
 
-**Con inyección (desacoplado):**
-```java
-public class TaskController {
-    private final TaskService service;
+### ¿Cuál es la diferencia entre compile y package?
 
-    public TaskController(TaskService service) {  // Desacoplado
-        this.service = service;
-    }
-}
-```
+**Respuesta**:
+- `mvn compile`: Solo compila el código Java a bytecode (.class)
+- `mvn package`: Compila + empaqueta en un JAR ejecutable (en carpeta target/)
 
-**Ventajas:**
-- Fácil de testear (inyectar mocks)
-- Fácil de cambiar implementaciones
-- Spring gestiona el ciclo de vida
+---
+
+### ¿Para qué sirve el archivo pom.xml?
+
+**Respuesta**: Es el archivo de configuración de Maven. Define:
+- Información del proyecto (nombre, versión)
+- Dependencias (bibliotecas externas)
+- Plugins (herramientas de build)
+- Propiedades (versión de Java, etc.)
+
+---
+
+### ¿Qué es un starter dependency?
+
+**Respuesta**: Es una dependencia "umbrella" que agrupa otras relacionadas. Por ejemplo:
+- `spring-boot-starter-web` incluye: Spring MVC, Tomcat, Jackson (JSON), etc.
+- Evita tener que agregar cada dependencia individual.
 
 ---
 
 ## Aún Tengo Problemas
 
-Si tu problema no está aquí:
+Si ninguna solución funcionó:
 
-1. **Revisa los logs** - El error suele estar ahí
-2. **Compara con la solución** - En `practicas/XX/solucion/`
-3. **Consulta el cheatsheet** - [cheatsheet.md](cheatsheet.md)
-4. **Pregunta en clase** - Al instructor o compañeros
+1. **Revisa el [Cheatsheet](cheatsheet.md)** - Comandos básicos y configuración
+2. **Lee [CONCEPTOS.md](CONCEPTOS.md)** - Entender la teoría ayuda
+3. **Busca el error exacto en Google** - Copia el mensaje de error completo
+4. **Pregunta en el foro de Moodle** - Comparte el error y lo que ya intentaste
+5. **Consulta en clase** - Trae tu laptop y revisamos juntos
 
 ---
 
 ## Recursos Adicionales
 
-- [Spring Boot Common Application Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html)
-- [Spring Web MVC](https://docs.spring.io/spring-framework/reference/web/webmvc.html)
-- [Stack Overflow - Spring Boot](https://stackoverflow.com/questions/tagged/spring-boot)
+- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+- [Maven Getting Started](https://maven.apache.org/guides/getting-started/)
+- [IntelliJ IDEA Spring Boot Guide](https://www.jetbrains.com/help/idea/spring-boot.html)
+- [Git Documentation](https://git-scm.com/doc)
 
 ---
+
+**Recuerda**: La mayoría de los problemas se resuelven con:
+1. Reiniciar el IDE
+2. `mvn clean install`
+3. Verificar versiones de Java y Maven
 
 [← Volver a Clase 1](README.md)

@@ -1,466 +1,271 @@
 # Tarea para Casa - Clase 1
 
 **Fecha de entrega:** Antes de la próxima clase (verificar en Moodle)
-**Peso en la nota final:** 10%
+**Peso en la nota final:** 5%
 **Modalidad:** Individual
 
 ---
 
 ## Objetivo
 
-Desarrollar una REST API completa con Spring Boot aplicando los conceptos de la Clase 1, demostrando dominio de arquitectura en capas, endpoints REST, y mejores prácticas.
+Asegurar que tienes tu entorno de desarrollo completamente configurado y que comprendes la estructura de un proyecto Spring Boot, preparándote para empezar a programar en la Clase 2.
 
 ---
 
-## Descripción de la Tarea
+## Parte 1: Configuración del Entorno (40%)
 
-Debes crear un microservicio REST API para uno de los siguientes dominios:
+### Requisitos
 
-1. **Banking (Banca)** - Sistema de gestión de cuentas bancarias
-2. **Retail (Comercio)** - Sistema de gestión de productos e inventario
-3. **Telecom (Telecomunicaciones)** - Sistema de gestión de clientes y planes
+Instala y configura las siguientes herramientas:
 
-**Importante:** Elige UN solo dominio y desarrolla la API completa para ese dominio.
+1. **Java Development Kit (JDK) 17+**
+   - OpenJDK o Oracle JDK
+   - Configura `JAVA_HOME`
+
+2. **Apache Maven 3.9+**
+   - Configura en PATH
+   - Verifica instalación
+
+3. **IntelliJ IDEA**
+   - Community (gratuito) o Ultimate
+   - Configura JDK en el IDE
+
+4. **Git**
+   - Instala y configura usuario/email
+
+### Verificación
+
+Ejecuta estos comandos y captura los resultados:
+
+```bash
+java -version
+javac -version
+mvn -version
+git --version
+```
+
+**Evidencia:** Screenshot de la terminal mostrando las 4 versiones.
 
 ---
 
-## Requisitos Funcionales
+## Parte 2: Crear Proyecto Starter (40%)
 
-Tu API debe implementar un CRUD completo (Create, Read, Update, Delete) con los siguientes endpoints:
+### Paso 1: Genera el proyecto
 
-### Endpoints Obligatorios
+Usa **Spring Initializr** (cualquier método):
 
+**Método 1: Web (https://start.spring.io/)**
+- Project: Maven
+- Language: Java
+- Spring Boot: 3.x (última estable)
+- Group: `dev.alefiengo`
+- Artifact: `mi-primer-springboot`
+- Packaging: Jar
+- Java: 17
+- Dependencies: **Spring Web**
+
+**Método 2: IntelliJ IDEA**
+- File → New → Project → Spring Initializr
+- Misma configuración que arriba
+
+**Método 3: VS Code**
+- Command Palette → Spring Initializr
+- Misma configuración
+
+### Paso 2: Importa y ejecuta
+
+1. Descomprime (si usaste web)
+2. Abre en IntelliJ IDEA
+3. Espera que Maven descargue dependencias
+4. Ejecuta: `mvn spring-boot:run`
+
+**Evidencia:** Screenshot mostrando en terminal:
 ```
-GET    /api/{recursos}           - Listar todos los recursos
-GET    /api/{recursos}/{id}      - Obtener un recurso por ID
-POST   /api/{recursos}           - Crear un nuevo recurso
-PUT    /api/{recursos}/{id}      - Actualizar un recurso existente
-DELETE /api/{recursos}/{id}      - Eliminar un recurso
-```
-
-### Endpoints Adicionales (Mínimo 2)
-
-Agrega al menos 2 de los siguientes:
-
-- **Filtrado**: `GET /api/{recursos}/filter?campo=valor`
-- **Búsqueda**: `GET /api/{recursos}/search?query=texto`
-- **Estadísticas**: `GET /api/{recursos}/stats`
-- **Operación específica del dominio** (ver ejemplos abajo)
-
----
-
-## Dominios y Ejemplos
-
-### Opción 1: Banking (Banca)
-
-**Recurso principal:** `Account` (Cuenta bancaria)
-
-**Modelo:**
-```java
-public class Account {
-    private Long id;
-    private String accountNumber;      // Ej: "ACC-001234"
-    private String accountHolder;      // Nombre del titular
-    private String accountType;        // SAVINGS, CHECKING, INVESTMENT
-    private Double balance;            // Saldo actual
-    private String currency;           // USD, BOB, EUR
-    private Boolean active;
-}
-```
-
-**Endpoints adicionales sugeridos:**
-- `GET /api/accounts/filter?accountType=SAVINGS`
-- `GET /api/accounts/search?holder=Juan`
-- `GET /api/accounts/stats` - Total de cuentas, suma de saldos, etc.
-- `PATCH /api/accounts/{id}/deposit` - Depositar dinero (operación específica)
-- `PATCH /api/accounts/{id}/withdraw` - Retirar dinero (operación específica)
-
----
-
-### Opción 2: Retail (Comercio)
-
-**Recurso principal:** `Product` (Producto)
-
-**Modelo:**
-```java
-public class Product {
-    private Long id;
-    private String sku;                // Código de producto: "PROD-001"
-    private String name;               // Nombre del producto
-    private String category;           // ELECTRONICS, CLOTHING, FOOD, etc.
-    private Double price;              // Precio unitario
-    private Integer stock;             // Cantidad en inventario
-    private Boolean available;         // Disponible para venta
-}
-```
-
-**Endpoints adicionales sugeridos:**
-- `GET /api/products/filter?category=ELECTRONICS`
-- `GET /api/products/search?name=laptop`
-- `GET /api/products/stats` - Total productos, valor del inventario, etc.
-- `GET /api/products/low-stock?threshold=10` - Productos con stock bajo
-- `PATCH /api/products/{id}/restock` - Reabastecer inventario
-
----
-
-### Opción 3: Telecom (Telecomunicaciones)
-
-**Recurso principal:** `Customer` (Cliente)
-
-**Modelo:**
-```java
-public class Customer {
-    private Long id;
-    private String customerId;         // ID único: "CUST-001234"
-    private String fullName;           // Nombre completo
-    private String phoneNumber;        // Número telefónico
-    private String plan;               // PREPAID, POSTPAID, UNLIMITED
-    private Double balance;            // Saldo disponible (prepago)
-    private Boolean active;            // Estado de la línea
-}
-```
-
-**Endpoints adicionales sugeridos:**
-- `GET /api/customers/filter?plan=PREPAID`
-- `GET /api/customers/search?name=Maria`
-- `GET /api/customers/stats` - Total clientes por plan, etc.
-- `PATCH /api/customers/{id}/recharge` - Recargar saldo (prepago)
-- `PATCH /api/customers/{id}/change-plan` - Cambiar plan
-
----
-
-## Requisitos Técnicos
-
-### 1. Arquitectura en Capas
-
-Tu proyecto debe tener la siguiente estructura:
-
-```
-src/main/java/dev/alefiengo/{dominio}/
-├── Application.java              # Clase principal
-├── controller/
-│   └── {Recurso}Controller.java  # Controlador REST
-├── service/
-│   └── {Recurso}Service.java     # Lógica de negocio
-└── model/
-    └── {Recurso}.java            # Modelo de datos
-```
-
-**Ejemplo para Banking:**
-```
-src/main/java/dev/alefiengo/banking/
-├── BankingApplication.java
-├── controller/
-│   └── AccountController.java
-├── service/
-│   └── AccountService.java
-└── model/
-    └── Account.java
+Tomcat started on port(s): 8080 (http)
+Started MiPrimerSpringbootApplication in X.XXX seconds
 ```
 
 ---
 
-### 2. Anotaciones Requeridas
+## Parte 3: Exploración y Documentación (20%)
 
-**Controller:**
-```java
-@RestController
-@RequestMapping("/api/accounts")
-public class AccountController {
-    // Inyección de dependencias por constructor
-    private final AccountService accountService;
+### Crea un README.md en tu proyecto
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    @GetMapping
-    public List<Account> getAllAccounts() { }
-
-    @PostMapping
-    public Account createAccount(@RequestBody Account account) { }
-
-    // ... resto de endpoints
-}
-```
-
-**Service:**
-```java
-@Service
-public class AccountService {
-    private List<Account> accounts = new ArrayList<>();
-
-    // Métodos de lógica de negocio
-}
-```
-
-**Model:**
-```java
-public class Account {
-    // Campos, constructores, getters, setters
-}
-```
-
----
-
-### 3. Configuración (application.yml)
-
-```yaml
-server:
-  port: 8080
-
-spring:
-  application:
-    name: {tu-dominio}-api
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
-
-info:
-  app:
-    name: {Tu Dominio} API
-    version: 1.0.0
-    author: Tu Nombre
-```
-
----
-
-### 4. Spring Boot Actuator
-
-Tu aplicación debe incluir Actuator con los siguientes endpoints funcionales:
-
-- `GET /actuator/health` - Health check
-- `GET /actuator/info` - Información de la aplicación
-
----
-
-## Requisitos de Entrega
-
-### 1. Repositorio Git (GitHub o GitLab)
-
-Crea un repositorio público con el siguiente nombre:
-
-```
-{dominio}-api-springboot
-```
-
-Ejemplos:
-- `banking-api-springboot`
-- `retail-api-springboot`
-- `telecom-api-springboot`
-
----
-
-### 2. Estructura del Repositorio
-
-```
-{dominio}-api-springboot/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   └── resources/
-│   └── test/
-├── pom.xml
-├── README.md                   # Documentación del proyecto
-├── POSTMAN_COLLECTION.json     # Colección de Postman
-└── .gitignore
-```
-
----
-
-### 3. README.md del Proyecto
-
-Tu README debe incluir:
+Documenta lo siguiente:
 
 ```markdown
-# {Nombre del Proyecto}
+# Mi Primer Proyecto Spring Boot
 
-## Descripción
-Breve descripción del proyecto y su propósito.
+## Información del Proyecto
 
-## Tecnologías
-- Java 17
-- Spring Boot 3.x
-- Maven
-- Spring Boot Actuator
+- **Nombre:** mi-primer-springboot
+- **Versión de Spring Boot:** 3.x.x
+- **Java:** 17
+- **Build Tool:** Maven
 
-## Requisitos Previos
-- Java 17+
-- Maven 3.9+
+## Estructura del Proyecto
 
-## Instalación y Ejecución
+Explica brevemente cada directorio/archivo:
+
+### src/main/java/dev/alefiengo/miprimerspringboot/
+- `MiPrimerSpringbootApplication.java`: [Tu explicación]
+
+### src/main/resources/
+- `application.properties`: [Tu explicación]
+
+### src/test/
+- [Tu explicación]
+
+### pom.xml
+- [Tu explicación breve de qué es y para qué sirve]
+
+### target/
+- [Tu explicación]
+
+## Cómo Ejecutar
 
 \```bash
-# Clonar el repositorio
-git clone https://github.com/{tu-usuario}/{dominio}-api-springboot.git
-
-# Navegar al directorio
-cd {dominio}-api-springboot
-
-# Ejecutar la aplicación
 mvn spring-boot:run
 \```
 
-## Endpoints
+## Dependencias Principales
 
-### Listar todos los recursos
-\```
-GET http://localhost:8080/api/{recursos}
-\```
+Lista las dependencias en `pom.xml` y explica brevemente cada una:
+- spring-boot-starter-web: [Tu explicación]
+- spring-boot-starter-test: [Tu explicación]
 
-### Crear un recurso
-\```
-POST http://localhost:8080/api/{recursos}
-Content-Type: application/json
+## Conceptos Aprendidos
 
-{
-  "campo1": "valor1",
-  "campo2": "valor2"
-}
-\```
-
-[... Documentar todos los endpoints ...]
-
-## Pruebas
-
-Importa la colección de Postman incluida en `POSTMAN_COLLECTION.json`
+- ¿Qué es Spring Boot?
+- ¿Qué es Maven?
+- ¿Qué significa "Tomcat started on port 8080"?
+- ¿Para qué sirve la anotación @SpringBootApplication?
 
 ## Autor
-Tu Nombre - [GitHub](https://github.com/tu-usuario)
+Tu Nombre - Curso Spring Boot & Kafka
 ```
 
 ---
 
-### 4. Colección de Postman
+## Entrega
 
-Exporta una colección de Postman que incluya:
+### 1. Repositorio Git
 
-- Todos los endpoints implementados
-- Ejemplos de request body para POST/PUT
-- Variables de entorno (si aplica)
+Crea un repositorio público en GitHub o GitLab:
 
-**Archivo:** `POSTMAN_COLLECTION.json`
+**Nombre del repo:** `mi-primer-springboot`
 
----
+**Debe contener:**
+```
+mi-primer-springboot/
+├── src/
+├── pom.xml
+├── README.md (con la documentación solicitada)
+├── .gitignore
+└── screenshots/
+    ├── 01-versiones.png (java, maven, git)
+    └── 02-app-running.png (Tomcat started)
+```
 
-### 5. Código Limpio
+### 2. En Moodle
 
-- Nombres de variables y métodos en inglés
-- Código indentado y formateado consistentemente
-- Sin código comentado innecesario
-- Sin warnings del compilador
-
----
-
-## Entrega en Moodle
-
-Sube a Moodle un archivo de texto (.txt) con:
-
-1. **URL de tu repositorio** (GitHub o GitLab)
-2. **Nombre completo**
-3. **Dominio elegido** (Banking, Retail o Telecom)
-4. **Nota adicional** (opcional): Cualquier observación sobre tu implementación
-
-**Ejemplo de archivo de entrega:**
+Sube un archivo de texto (.txt) con:
 
 ```
-Nombre: Juan Pérez Rodríguez
-Dominio: Banking
-Repositorio: https://github.com/juanperez/banking-api-springboot
+Nombre: Tu Nombre Completo
+Repositorio: https://github.com/tu-usuario/mi-primer-springboot
 
-Notas:
-- Implementé 3 endpoints adicionales
-- Agregué validación de saldo negativo en el método withdraw
+Versiones instaladas:
+- Java: 17.x.x
+- Maven: 3.9.x
+- IDE: IntelliJ IDEA Community/Ultimate
+
+Observaciones:
+[Cualquier dificultad que hayas tenido o comentario adicional]
 ```
 
 ---
 
 ## Criterios de Evaluación
 
-Tu tarea será evaluada según la rúbrica detallada en [RUBRICA.md](RUBRICA.md).
-
-**Resumen de criterios:**
-
-| Criterio | Peso |
-|----------|------|
-| Funcionalidad (CRUD completo) | 40% |
-| Arquitectura en capas | 20% |
-| Endpoints adicionales | 15% |
-| Documentación (README) | 10% |
-| Colección de Postman | 5% |
-| Código limpio y buenas prácticas | 10% |
+| Criterio | Peso | Descripción |
+|----------|------|-------------|
+| Entorno configurado correctamente | 40% | Java, Maven, Git instalados y funcionando |
+| Proyecto Spring Boot ejecuta | 40% | `mvn spring-boot:run` funciona sin errores |
+| README.md completo | 15% | Documentación clara de estructura y conceptos |
+| Repositorio Git | 5% | Proyecto subido a GitHub/GitLab |
 
 **Total:** 100%
 
 ---
 
-## Ejemplos de Referencia
-
-En el directorio `ejemplos/` encontrarás proyectos de referencia completos para cada dominio:
-
-- [ejemplo-banking/](ejemplos/ejemplo-banking/) - Implementación de referencia para Banking
-- [ejemplo-retail/](ejemplos/ejemplo-retail/) - Implementación de referencia para Retail
-- [ejemplo-telecom/](ejemplos/ejemplo-telecom/) - Implementación de referencia para Telecom
-
-**Importante:** Estos son ejemplos de referencia. Tu implementación debe ser original.
-
----
-
 ## Preguntas Frecuentes
 
-### ¿Puedo usar otro dominio que no esté en la lista?
+### ¿Qué hago si `mvn spring-boot:run` falla?
 
-No. Debes elegir uno de los tres dominios especificados (Banking, Retail, Telecom).
+Revisa:
+1. ¿Está Maven instalado? (`mvn -version`)
+2. ¿Está Java instalado? (`java -version`)
+3. ¿Esperaste a que Maven descargue todas las dependencias?
 
-### ¿Debo usar base de datos?
+Consulta el [FAQ](../FAQ.md) para errores comunes.
 
-No. Para esta tarea usa `ArrayList` o `HashMap` como almacenamiento en memoria. La persistencia en base de datos se verá en la Clase 2.
+### ¿Puedo usar Eclipse o VS Code en lugar de IntelliJ?
 
-### ¿Puedo trabajar en equipo?
+Sí, pero IntelliJ IDEA tiene mejor soporte para Spring Boot. Si usas otro IDE, documéntalo en tu entrega.
 
-No. Esta es una tarea individual. Cada estudiante debe entregar su propio proyecto.
+### ¿Debo escribir código Java?
 
-### ¿Qué pasa si entrego tarde?
+**NO**. Para esta tarea solo necesitas crear el proyecto starter y documentar su estructura. El código lo escribiremos en Clase 2.
 
-Revisa la política de entregas tardías en Moodle. Generalmente se aplica una penalización por día de retraso.
+### ¿Qué pongo en .gitignore?
 
-### ¿Puedo agregar más funcionalidades?
+Usa este contenido:
 
-Sí, puedes agregar funcionalidades extra más allá de los requisitos mínimos. Esto puede sumar puntos adicionales.
+```gitignore
+target/
+.idea/
+*.iml
+.DS_Store
+```
 
-### ¿Debo escribir tests?
+### No tengo cuenta en GitHub
 
-No es obligatorio para esta tarea, pero es recomendado. Los tests suman puntos adicionales.
+Puedes usar GitLab (https://gitlab.com) que es gratuito. O crea una cuenta en GitHub (https://github.com).
 
 ---
 
 ## Recursos de Apoyo
 
-- [Cheatsheet de la Clase 1](../cheatsheet.md)
-- [FAQ de la Clase 1](../FAQ.md)
+- [Guía de Instalación Java + Maven](../../INSTALL_JAVA_MAVEN.md)
+- [FAQ - Clase 1](../FAQ.md)
+- [CONCEPTOS.md - Teoría de Microservicios](../CONCEPTOS.md)
 - [Spring Initializr](https://start.spring.io/)
-- [Prácticas de la Clase 1](../practicas/)
+- [IntelliJ IDEA Download](https://www.jetbrains.com/idea/download/)
 
 ---
 
 ## Consejos
 
-1. **Empieza temprano** - No dejes la tarea para el último día
-2. **Prueba constantemente** - Verifica cada endpoint después de implementarlo
-3. **Commits frecuentes** - Haz commits pequeños y descriptivos
-4. **README claro** - Un buen README facilita la evaluación
-5. **Revisa la rúbrica** - Asegúrate de cumplir todos los criterios
-6. **Consulta ejemplos** - Usa los proyectos de referencia como guía
-7. **Pregunta dudas** - Si algo no está claro, pregunta en clase o por Moodle
+1. **Haz la tarea pronto** - No esperes al último día, pueden surgir problemas de instalación
+2. **Documenta los errores** - Si algo falla, anótalo para preguntar en clase
+3. **Lee CONCEPTOS.md** - Entender la teoría te ayudará en las próximas clases
+4. **Explora el proyecto** - Abre los archivos, léelos, trata de entender qué hace cada cosa
+5. **Pregunta en Moodle** - Si tienes dudas, usa el foro del curso
 
 ---
 
-**¡Éxito en tu proyecto!**
+## Para Profundizar (Opcional)
+
+Si terminas rápido y quieres adelantarte para Clase 2:
+
+- Lee la documentación oficial: [Spring Boot Getting Started](https://spring.io/guides/gs/spring-boot/)
+- Mira qué anotaciones existen en `@SpringBootApplication`
+- Investiga qué es un servlet container (Tomcat)
+- Explora el archivo `pom.xml` línea por línea
+
+---
+
+**¡Nos vemos en Clase 2 para empezar a programar!**
 
 [← Volver a Clase 1](../README.md)

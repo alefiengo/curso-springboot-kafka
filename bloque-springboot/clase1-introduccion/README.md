@@ -1,17 +1,17 @@
 # Clase 1: Introducción a Spring Boot y Microservicios
 
-Bienvenido a la primera clase del curso. Construirás tu primera aplicación REST API con Spring Boot, desde cero hasta una arquitectura profesional.
+Bienvenido a la primera clase del curso. En esta sesión prepararás tu entorno de desarrollo y crearás tu primer proyecto Spring Boot starter.
 
 ---
 
 ## En Esta Clase Aprenderás
 
-- Crear proyectos Spring Boot con Spring Initializr
-- Implementar REST APIs con diferentes tipos de endpoints
-- Construir un CRUD completo sin base de datos
-- Organizar código con arquitectura en capas profesional
-- Monitorear aplicaciones con Spring Boot Actuator
-- Aplicar inyección de dependencias
+- Configurar el entorno de desarrollo (Java 17, Maven 3.9+, IntelliJ IDEA)
+- Comprender qué es un microservicio y sus características
+- Conocer Spring Boot y su ecosistema
+- Crear un proyecto Spring Boot con Spring Initializr (web, IntelliJ, VS Code)
+- Entender la estructura de un proyecto Maven/Spring Boot
+- Ejecutar una aplicación Spring Boot vacía
 
 ---
 
@@ -19,23 +19,23 @@ Bienvenido a la primera clase del curso. Construirás tu primera aplicación RES
 
 ### Conocimientos
 - Java básico (sintaxis, clases, objetos)
-- Conceptos de HTTP y REST (GET, POST, PUT, DELETE)
-- Manejo básico de terminal
+- Conceptos básicos de HTTP
+- Manejo básico de terminal/línea de comandos
 
-### Herramientas Necesarias
-- **Java 17+** - JDK instalado y configurado
+### Herramientas a Instalar
+- **Java 17+** - JDK (OpenJDK o Oracle JDK)
 - **Maven 3.9+** - Gestor de dependencias
 - **IntelliJ IDEA** - IDE recomendado (Community o Ultimate)
-- **Postman** - Para probar APIs (opcional pero recomendado)
 - **Git** - Control de versiones
 
-**¿No tienes todo instalado?** → [Guía de instalación completa](../../INSTALL_JAVA_MAVEN.md)
+**[Guía de instalación completa →](../../INSTALL_JAVA_MAVEN.md)**
 
 ---
 
 ## Comienza Aquí
 
 ### Paso 1: Verifica tu Entorno
+
 ```bash
 # Verificar Java
 java -version
@@ -49,114 +49,111 @@ mvn -version
 git --version
 ```
 
-### Paso 2: Empieza con la Primera Práctica
-**[Ir a Práctica 1: Hola Mundo](practicas/01-hola-mundo/)**
+### Paso 2: Crea tu Primer Proyecto
+
+Usa Spring Initializr para generar un proyecto starter:
+- Web: https://start.spring.io/
+- IntelliJ IDEA: File → New → Project → Spring Initializr
+- VS Code: Command Palette → Spring Initializr
+
+**Configuración:**
+- Group: `dev.alefiengo`
+- Artifact: `mi-primer-springboot`
+- Dependencies: **Spring Web**
 
 ---
 
 ## Contenido de la Clase
 
-### Prácticas Progresivas
+### 1. Teoría de Microservicios
 
-1. **[Hola Mundo en Spring Boot](practicas/01-hola-mundo/)**
-   - Crear proyecto con Spring Initializr
-   - Primer endpoint REST
-   - Ejecutar y probar
+**[CONCEPTOS.md](CONCEPTOS.md)** - Lectura fundamental
 
-2. **[REST APIs con Parámetros](practicas/02-parametros/)**
-   - Query parameters (`?name=value`)
-   - Path variables (`/api/users/{id}`)
-   - Request body (JSON)
-
-3. **[TODO API - CRUD Completo](practicas/03-todo-api/)**
-   - GET, POST, PUT, DELETE
-   - ArrayList como almacenamiento
-   - Códigos de estado HTTP
-
-4. **[Actuator y Configuración](practicas/04-actuator/)**
-   - Health checks
-   - Métricas de aplicación
-   - Archivo `application.yml`
-
-5. **[Arquitectura en Capas](practicas/05-arquitectura-capas/)**
-   - Separar Controller, Service, Model
-   - Inyección de dependencias
-   - Buenas prácticas
-
----
-
-### Teoría y Conceptos
-
-**[Conceptos Fundamentales](CONCEPTOS.md)** (Lectura opcional)
-- ¿Qué son los microservicios?
+**Temas cubiertos:**
+- ¿Qué es un microservicio?
+- Monolito vs Microservicios
+- Características de los microservicios
+- Por qué Spring Boot
 - Arquitectura de Spring Boot
-- Patrones de diseño aplicados
-- Comparativas con otros frameworks
+
+### 2. Estructura de un Proyecto Spring Boot
+
+Explorarás y entenderás:
+
+```
+mi-primer-springboot/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── dev/alefiengo/miprimerspringboot/
+│   │   │       └── MiPrimerSpringbootApplication.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+│       └── java/
+├── target/                    # Archivos compilados
+├── pom.xml                    # Configuración Maven
+└── .gitignore
+```
+
+**Archivos clave:**
+- `pom.xml` - Define dependencias y configuración del proyecto
+- `MiPrimerSpringbootApplication.java` - Punto de entrada (@SpringBootApplication)
+- `application.properties` - Configuración de la aplicación
+
+### 3. Ejecutar el Proyecto
+
+```bash
+mvn spring-boot:run
+```
+
+**Deberías ver:**
+```
+Tomcat started on port(s): 8080 (http)
+Started MiPrimerSpringbootApplication in X.XXX seconds
+```
 
 ---
 
-### Recursos de Apoyo
-
-**[Diagramas](recursos/diagramas/)**
-- Arquitectura en capas
-- Flujo de petición HTTP
-- Spring Boot startup flow
-
-**[Postman Collection](recursos/postman/)**
-- Colección completa de la clase
-- 20 requests listos para importar
-
----
-
-### Desafíos
-
-**[Desafío Rápido](desafios/rapido.md)**
-- Agregar filtrado a TODO API
-
-**[Desafío Intermedio](desafios/intermedio.md)** (Opcional)
-- Búsqueda y estadísticas
-
-**[Desafío Avanzado](desafios/avanzado.md)** (Extra)
-- Paginación y ordenamiento
-
----
-
-### Tarea para Casa
+## Tarea para Casa
 
 **[Proyecto Individual](tarea/)**
-- Crear tu propia REST API (Banking, Retail o Telecom)
-- Código en GitHub/GitLab
-- Rúbrica de evaluación detallada
-- Proyectos de ejemplo incluidos
+
+**Objetivo:** Configurar tu entorno y crear tu proyecto starter
+
+**Entregas:**
+1. Screenshots de versiones instaladas (Java, Maven, Git)
+2. Proyecto Spring Boot funcionando (screenshot de Tomcat started)
+3. README documentando la estructura del proyecto
+4. Repositorio en GitHub/GitLab
+
+**Peso:** 5% de la nota final
 
 ---
 
 ## Material de Referencia
 
 ### Durante la Clase
-- **[Cheatsheet](cheatsheet.md)** - Referencia rápida de comandos y anotaciones
-- **[FAQ](FAQ.md)** - Preguntas frecuentes y troubleshooting
+- **[Cheatsheet](cheatsheet.md)** - Comandos esenciales de Maven y Git
+- **[FAQ](FAQ.md)** - Errores comunes de instalación y soluciones
 
 ### Después de la Clase
-- **[CONCEPTOS.md](CONCEPTOS.md)** - Teoría profunda
-- **[Ejemplos de Proyectos](tarea/ejemplos/)** - Proyectos de referencia completos
+- **[CONCEPTOS.md](CONCEPTOS.md)** - Teoría profunda sobre microservicios y Spring Boot
 
 ---
 
 ## Conceptos Clave
 
-Al finalizar esta clase dominarás:
+Al finalizar esta clase comprenderás:
 
 | Concepto | Descripción |
 |----------|-------------|
-| **Microservicio** | Aplicación pequeña e independiente con responsabilidad única |
-| **Spring Boot** | Framework que simplifica desarrollo Spring con auto-configuración |
-| **REST API** | Arquitectura para diseñar APIs web usando HTTP |
-| **@RestController** | Anotación que marca una clase como controlador REST |
-| **@GetMapping** | Mapea peticiones HTTP GET a métodos |
-| **@PostMapping** | Mapea peticiones HTTP POST a métodos |
-| **Inyección de Dependencias** | Patrón para desacoplar componentes |
-| **Actuator** | Herramienta de Spring Boot para monitoreo |
+| **Microservicio** | Aplicación pequeña e independiente con una responsabilidad específica |
+| **Spring Boot** | Framework que simplifica el desarrollo Spring con auto-configuración |
+| **Maven** | Herramienta de gestión de proyectos y construcción para Java |
+| **@SpringBootApplication** | Anotación principal que habilita auto-configuración |
+| **Embedded Server** | Tomcat incluido en el JAR, no requiere instalación externa |
+| **Starter** | Dependencia que agrupa otras relacionadas (ej: spring-boot-starter-web) |
 
 **Ver glosario completo →** [cheatsheet.md#glosario-técnico](cheatsheet.md#glosario-técnico)
 
@@ -166,12 +163,14 @@ Al finalizar esta clase dominarás:
 
 Antes de terminar la clase, asegúrate de haber:
 
-- [ ] Completado las 5 prácticas
-- [ ] Ejecutado con éxito una TODO API completa
-- [ ] Entendido la arquitectura Controller → Service → Model
-- [ ] Probado Actuator (`/actuator/health`)
-- [ ] Importado la Postman collection
-- [ ] Intentado el desafío rápido
+- [ ] Instalado Java 17+ correctamente
+- [ ] Instalado Maven 3.9+ correctamente
+- [ ] Configurado IntelliJ IDEA con JDK
+- [ ] Creado tu primer proyecto Spring Boot
+- [ ] Ejecutado exitosamente `mvn spring-boot:run`
+- [ ] Visto en consola "Tomcat started on port(s): 8080"
+- [ ] Comprendido la estructura básica del proyecto
+- [ ] Leído CONCEPTOS.md (al menos introducción)
 - [ ] Revisado las instrucciones de la tarea
 
 ---
@@ -179,56 +178,44 @@ Antes de terminar la clase, asegúrate de haber:
 ## ¿Necesitas Ayuda?
 
 ### Durante la Clase
-1. Revisa el **[FAQ](FAQ.md)** - Errores comunes ya documentados
-2. Compara tu código con la **solución** de cada práctica
-3. Pregunta al instructor o compañeros
+1. Revisa el **[FAQ](FAQ.md)** - Errores comunes de instalación ya documentados
+2. Pregunta al instructor
+3. Consulta con compañeros
 
 ### Después de la Clase
-1. Consulta **[CONCEPTOS.md](CONCEPTOS.md)** para profundizar
-2. Revisa los **[ejemplos de proyectos](tarea/ejemplos/)** de la tarea
-3. Usa el **[cheatsheet](cheatsheet.md)** como referencia
+1. Consulta **[CONCEPTOS.md](CONCEPTOS.md)** para profundizar en teoría
+2. Revisa la **[guía de instalación](../../INSTALL_JAVA_MAVEN.md)** paso a paso
+3. Usa el **[cheatsheet](cheatsheet.md)** como referencia rápida
+4. Pregunta en el foro de Moodle
 
 ---
 
 ## Próxima Clase
 
-**Clase 2: REST APIs con Spring Data JPA**
-- Conectar a PostgreSQL
-- Persistencia real de datos
-- Relaciones entre entidades
-- Queries personalizadas
+**Clase 2: REST APIs con Spring Boot**
+- Primer endpoint "Hola Mundo"
+- Endpoints con parámetros (PathVariable, RequestParam)
+- CRUD básico (GET, POST)
+- Configuración con application.yml
 
-**[Ver Clase 2 →](../clase2-rest-jpa/)**
+**Preparación:** Asegúrate de tener tu entorno funcionando antes de Clase 2. En la próxima sesión empezaremos a escribir código Java.
 
 ---
 
-## Estructura de Archivos
+## Estructura de Archivos de la Clase
 
 ```
 clase1-introduccion/
 ├── README.md (estás aquí)
-├── CONCEPTOS.md
-├── cheatsheet.md
-├── FAQ.md
-├── practicas/
-│   ├── 01-hola-mundo/
-│   ├── 02-parametros/
-│   ├── 03-todo-api/
-│   ├── 04-actuator/
-│   └── 05-arquitectura-capas/
-├── recursos/
-│   ├── diagramas/
-│   └── postman/
-├── desafios/
-│   ├── rapido.md
-│   ├── intermedio.md
-│   └── avanzado.md
+├── CONCEPTOS.md (teoría fundamental)
+├── cheatsheet.md (referencia rápida)
+├── FAQ.md (errores comunes)
 └── tarea/
-    ├── README.md
-    ├── RUBRICA.md
-    └── ejemplos/
+    └── README.md (instrucciones de tarea)
 ```
 
 ---
 
-**¡Comencemos!** [Práctica 1: Hola Mundo](practicas/01-hola-mundo/)
+**¡Bienvenido al curso! Nos vemos en Clase 2 para empezar a programar.**
+
+[← Volver al Curso](../../README.md)
