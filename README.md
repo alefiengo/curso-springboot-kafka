@@ -39,7 +39,7 @@ Al finalizar el curso, el estudiante será capaz de:
 
 - **[Clase 1: Introducción a Microservicios y Spring Boot](bloque-springboot/clase1-introduccion/)**  
   Entorno de desarrollo listo, teoría de microservicios y primer proyecto Spring Boot.
-- **Clase 2: Fundamentos de REST y acceso a datos**  
+- **[Clase 2: REST APIs y Persistencia con Spring Data JPA](bloque-springboot/clase2-rest-jpa/)**  
   Diferencias Spring Framework vs Spring Boot, endpoints REST iniciales y persistencia con PostgreSQL + Spring Data JPA.
 - **Clase 3: Arquitectura en capas y validación**  
   Separación Controller/Service/Repository, DTOs, Bean Validation, manejo global de excepciones y relaciones 1:N.
@@ -83,15 +83,20 @@ bloque-springboot/
 │   ├── FAQ.md
 │   └── tarea/
 │       └── README.md
-└── clase2-rest-jpa/
-    ├── README.md
-    ├── labs/
-    ├── recursos/
-    └── tarea/
+├── clase2-rest-jpa/
+│   ├── README.md
+│   ├── CONCEPTOS.md
+│   ├── cheatsheet.md
+│   ├── FAQ.md
+│   ├── labs/
+│   ├── recursos/
+│   └── tarea/
+└── ... (clases siguientes)
 ```
 
 Cada clase incluye:
 - `README.md` con objetivos, contexto y enlaces a laboratorios.
+- `CONCEPTOS.md` con la teoría previa (cuando aplique).
 - Carpeta `labs/` con prácticas guiadas siguiendo la plantilla de ocho secciones.
 - Carpeta `tarea/` con la actividad para casa y criterios de evaluación.
 - Recursos auxiliares cuando aplique (Postman collections, guías, diagramas).
@@ -135,6 +140,6 @@ Cada clase se publicará con README, laboratorios, tarea y recursos adicionales 
 
 ---
 
-Este repositorio es público. Úsalo para aprender, adaptar ejemplos a tus proyectos y compartir conocimiento con tu equipo.
+Este repositorio es público. Úsalo para aprender, adaptar ejemplos a tus proyectos y compartir conocimiento con la comunidad.
 
 **i-Quattro** · Formación en desarrollo backend y arquitecturas cloud-native
