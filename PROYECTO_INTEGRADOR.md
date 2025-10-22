@@ -1,67 +1,43 @@
 # Proyecto Integrador · Spring Boot & Apache Kafka
 
-El proyecto integrador se desarrolla durante las últimas sesiones del curso y consolida los conceptos aprendidos en los bloques de Spring Boot y Kafka.
+Referencia pública del proyecto integrador que se muestra como hilo conductor del curso. El código completo se publicará en un repositorio separado para que los estudiantes lo consulten cuando necesiten ejemplos o configuraciones avanzadas.
 
 ---
 
-## Objetivo general
+## Objetivo
 
-Construir un sistema de microservicios orientado a comercio electrónico que procese pedidos, administre inventario y genere analítica en tiempo real usando Apache Kafka.
-
----
-
-## Alcance tentativo
-
-- **Servicios**:
-  - `order-service`: expone APIs REST para gestionar órdenes y publica eventos en Kafka.
-  - `inventory-service`: consume eventos de órdenes y actualiza existencias.
-  - `analytics-service`: procesa flujos con Kafka Streams y genera métricas agregadas.
-- **Kafka**:
-  - Topics para órdenes creadas, órdenes confirmadas y actualizaciones de inventario.
-  - Consumer groups diferenciados por servicio.
-- **Persistencia**:
-  - PostgreSQL por servicio (database-per-service) o enfoque en memoria si el tiempo es limitado.
-- **Seguridad (Clase 7/8)**:
-  - Autenticación básica con JWT para endpoints sensibles.
-  - Configuración mínima de CORS y manejo de tokens.
-- **Observabilidad**:
-  - Uso de Spring Boot Actuator y logs estructurados.
-
-> El detalle final se ajustará según el ritmo del grupo. Esta guía sirve como referencia para planificar entregables y rúbricas.
+Mostrar un escenario de comercio electrónico que evoluciona desde un servicio monolítico hasta una arquitectura de microservicios conectados mediante Kafka, reforzando los temas de cada bloque.
 
 ---
 
-## Entregables sugeridos
+## Roadmap de versiones
 
-1. **Repositorio Git central** con los tres microservicios y una carpeta `infra/` para `docker-compose.yml`.  
-2. **Documentación**:
-   - README principal con instrucciones de ejecución.
-   - Diagramas de arquitectura (opcional) en `docs/`.
-   - Colecciones Postman para endpoints REST.
-3. **Docker Compose**:
-   - Brokers de Kafka + Zookeeper.
-   - Kafka UI o herramienta similar para monitoreo.
-   - Servicios Spring Boot listos para levantarse en conjunto.
-4. **Presentación final** (Clase 8):
-   - Resumen de arquitectura.
-   - Flujo de eventos y demo breve de endpoints + mensajes.
+| Versión | Bloque / Clase | Enfoque principal |
+|---------|----------------|-------------------|
+| v1.0 | Bloque 1 (Clases 1-3) | REST + JPA + PostgreSQL, validaciones y manejo de errores. |
+| v2.0 | Bloque 2 (Clases 4-6) | Separación en microservicios, mensajería con Kafka, consumidores y streams. |
+| v3.0 | Bloque 3 (Clases 7-8) | Seguridad básica (JWT), observabilidad y demo final. |
+
+Cada versión incorpora los componentes trabajados en clase (información detallada se entregará en el repositorio dedicado).
 
 ---
 
-## Evaluación preliminar (propuesta)
+## Componentes previstos
 
-| Criterio | Descripción | Peso |
-|----------|-------------|------|
-| Diseño e implementación de microservicios | Calidad del código, separación de responsabilidades, buenas prácticas | 35% |
-| Integración con Kafka | Productores, consumidores, manejo de eventos y resiliencia básica | 30% |
-| Observabilidad y seguridad mínima | Uso de Actuator, logs, manejo de tokens o credenciales | 15% |
-| Documentación y despliegue | README, scripts de arranque, claridad en la explicación | 20% |
+- **Servicios**: order-service, inventory-service, analytics-service (más servicios de apoyo si el tiempo lo permite).
+- **Kafka**: topics para órdenes creadas/confirmadas, actualizaciones de inventario y flujo de analítica.
+- **Persistencia**: PostgreSQL por servicio para favorecer el encapsulamiento.
+- **Seguridad**: autenticación con JWT en endpoints críticos (bloque 3).
+- **Observabilidad**: Spring Boot Actuator, métricas y logging estructurado.
 
 ---
 
-## Próximos pasos
+## Recursos
 
-- Completar la documentación de Clases 3-7 antes de concretar el repositorio definitivo del proyecto.  
-- Definir si el proyecto será entregado individual o en grupos y comunicarlo en la Clase 7.  
-- Preparar una rúbrica final alineada con esta tabla y publicarla en la carpeta de la Clase 8.
+- Repositorio de referencia: se comunicará al finalizar cada bloque.
+- Colecciones Postman y docker-compose específicos acompañarán a cada versión publicada.
+- La rúbrica y requisitos del proyecto final se anunciarán junto con el material de la Clase 8.
 
+---
+
+Este documento resume el avance del proyecto integrador visible para los estudiantes; detalles operativos y planificación interna se mantienen en archivos privados.
