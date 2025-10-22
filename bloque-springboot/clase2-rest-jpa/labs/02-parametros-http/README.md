@@ -17,6 +17,7 @@ cat <<'EOF' > src/main/java/dev/alefiengo/productservice/controller/ProductContr
 package dev.alefiengo.productservice.controller;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -56,10 +57,18 @@ public class ProductController {
     public ResponseEntity<Map<String, Object>> search(@RequestParam(required = false) String name,
                                                       @RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(Map.of(
-            "filters", Map.of("name", name, "page", page, "size", size),
-            "results", inMemoryStore.values()
-        ));
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("page", page);
+        filters.put("size", size);
+        if (name != null && !name.isBlank()) {
+            filters.put("name", name);
+        }
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("filters", filters);
+        body.put("results", inMemoryStore.values());
+
+        return ResponseEntity.ok(body);
     }
 
     @PostMapping
@@ -142,7 +151,7 @@ curl -X DELETE http://localhost:8080/api/products/1
 ## 4. Explicación detallada
 
 1. **Uso de `@RequestParam`**  
-   Los parámetros de query permiten personalizar la petición sin modificar la ruta. El atributo `defaultValue` evita `null` cuando el cliente no envía el parámetro.
+   Los parámetros de query permiten personalizar la petición sin modificar la ruta. El atributo `defaultValue` evita `null` cuando el cliente no envía el parámetro y, para construir la respuesta, usamos un `HashMap` para tolerar valores opcionales (evitamos `Map.of(...)` porque no acepta `null`).
 2. **`@RequestBody` y deserialización**  
    Spring Boot usa Jackson para convertir JSON en objetos Java. El `record ProductRequest` evita escribir getters/setters.
 3. **Respuesta controlada con `ResponseEntity`**  
@@ -167,6 +176,8 @@ curl -X DELETE http://localhost:8080/api/products/1
   Asegúrate de enviar `Content-Type: application/json` en peticiones POST/PUT.
 - **Los parámetros de query llegan vacíos**  
   Revisa que la URL incluya `?name=valor` y que en el método el parámetro tenga el mismo nombre.
+- **`NullPointerException` al listar sin filtros**  
+  Si usaste `Map.of(...)` para construir la respuesta y `name` es `null`, se producirá el error porque `Map.of` no admite valores nulos. Cambia a `HashMap` como se muestra en el código del lab.
 - **`ResponseEntity` retorna 404 siempre**  
   Confirma que el `id` exista en el mapa. Si reiniciaste la aplicación se pierde el estado.
 - **Jackson no puede deserializar**  
