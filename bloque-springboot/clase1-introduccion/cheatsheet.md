@@ -268,7 +268,7 @@ export PATH=$JAVA_HOME/bin:$PATH
 **Opción 1**: Detener aplicación anterior
 ```bash
 # Linux/macOS
-lsof -ti:8080 | xargs kill -9
+lsof -ti:8080 | xargs kill
 
 # Windows
 netstat -ano | findstr :8080
@@ -284,18 +284,18 @@ server.port=8081
 
 ## Glosario Técnico
 
-| Término Español | English Term | Descripción |
-|-----------------|--------------|-------------|
-| Microservicio | Microservice | Aplicación pequeña e independiente con una responsabilidad específica |
-| Spring Boot | Spring Boot | Framework que simplifica desarrollo Spring con auto-configuración |
-| Maven | Maven | Herramienta de gestión de proyectos y construcción para Java |
-| Dependencia | Dependency | Biblioteca externa que tu proyecto necesita |
-| Artefacto | Artifact | Resultado del build (JAR, WAR) |
-| POM | Project Object Model | Archivo XML que configura proyecto Maven (pom.xml) |
-| Starter | Starter | Dependencia que agrupa otras relacionadas (ej: spring-boot-starter-web) |
-| Empaquetado | Packaging | Formato del artefacto final (jar, war) |
-| Servidor embebido | Embedded Server | Tomcat incluido en JAR, no requiere instalación externa |
-| Auto-configuración | Auto-configuration | Spring Boot configura automáticamente según dependencias |
+| Término | Descripción |
+|---------|-------------|
+| Microservicio | Aplicación pequeña e independiente con una responsabilidad específica. |
+| Spring Boot | Framework que simplifica desarrollo Spring con auto-configuración. |
+| Maven | Herramienta de gestión de proyectos y construcción para Java. |
+| Dependencia | Biblioteca externa que el proyecto necesita para compilarse o ejecutarse. |
+| Artefacto | Resultado del proceso de construcción (por ejemplo, archivo JAR). |
+| POM | Archivo `pom.xml` que describe configuración y dependencias de Maven. |
+| Starter | Dependencia que agrupa otras relacionadas (ejemplo: `spring-boot-starter-web`). |
+| Empaquetado | Formato final del artefacto (jar, war). |
+| Servidor embebido | Servidor HTTP incluido en el JAR, sin instalación externa (Tomcat, Jetty). |
+| Auto-configuración | Capacidad de Spring Boot para configurar componentes según las dependencias presentes. |
 
 ---
 
@@ -351,8 +351,8 @@ jps
 netstat -an | grep 8080    # Linux/macOS
 netstat -an | findstr 8080 # Windows
 
-# Limpiar caché Maven
-rm -rf ~/.m2/repository
+# Forzar descarga limpia de dependencias (opcional)
+mvn dependency:purge-local-repository
 
 # Ver versión de dependencias
 mvn versions:display-dependency-updates

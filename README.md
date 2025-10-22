@@ -1,279 +1,140 @@
 # Spring Boot & Apache Kafka: Desarrollo de Microservicios y Mensajería en Tiempo Real
 
-Repositorio oficial del curso de **i-Quattro** enfocado en el desarrollo de aplicaciones empresariales con Spring Boot y la integración con Apache Kafka para el manejo de mensajería, streaming de datos y arquitecturas de microservicios escalables.
-
-**[Información del curso](https://www.i-quattro.com/)**
+Repositorio oficial del curso de **i-Quattro** centrado en el desarrollo de microservicios con Spring Boot e integración con Apache Kafka para mensajería y procesamiento de eventos en tiempo real.
 
 ---
 
-## Información General
+## Sobre el programa
 
-**Duración:** 20 horas
-**Modalidad:** 100% práctico con laboratorios en cada sesión
-**Horario:** Del 20 de octubre al 5 de noviembre, 2025 | Lunes, Miércoles y Viernes 19:00-21:30
-
-### Objetivos
-
-Formar a los participantes en el desarrollo de aplicaciones empresariales con Spring Boot y la integración con Apache Kafka para el manejo de mensajería, streaming de datos y arquitecturas de microservicios escalables.
-
-### Valor Diferencial
-
-- Curso 100% práctico con laboratorios en cada sesión
-- Ejemplos orientados a casos reales (banca, retail, telecomunicaciones)
-- Instructores con experiencia en proyectos cloud-native y DevOps
-- Integración completa Spring Boot + Kafka con Docker
+- Serie de ocho sesiones presenciales, con enfoque práctico y laboratorios guiados.
+- Progresión gradual: fundamentos de Spring Boot → persistencia → mensajería con Kafka → integración y seguridad.
+- Material completamente en español, sin notas privadas del instructor y orientado a estudiantes que ya completaron la Clase 1.
 
 ---
 
-## Dirigido a
+## Público objetivo
 
-- **Desarrolladores Java** que buscan profundizar en microservicios
-- **Ingenieros de software** que desean integrar Kafka para sistemas de mensajería
-- **Arquitectos de software** interesados en soluciones event-driven
-- **Estudiantes avanzados** de informática/ingeniería en desarrollo backend
-
----
-
-## Contenido del Curso
-
-### Temario (10 puntos)
-
-1. Introducción a microservicios y Spring Boot
-2. Creación de proyectos Spring Boot y configuración básica
-3. REST APIs con Spring Web y manejo de datos con Spring Data JPA
-4. Introducción a Apache Kafka y fundamentos de mensajería
-5. Productores y Consumidores en Kafka con Spring Boot
-6. Procesamiento de eventos y streaming con Kafka Streams
-7. Seguridad en microservicios y Kafka
-8. Patrones de diseño event-driven (CQRS, Event Sourcing)
-9. Monitoreo, logging y métricas en aplicaciones Spring + Kafka
-10. Proyecto final integrador: microservicio con Kafka para procesamiento en tiempo real
+- Desarrolladores Java que desean profesionalizar su trabajo con Spring Boot.
+- Ingenieros de software que necesitan integrar una plataforma de mensajería basada en Kafka.
+- Arquitectos interesados en soluciones event-driven y microservicios escalables.
+- Estudiantes avanzados de ingeniería informática con interés en backend.
 
 ---
 
-## Clases (8 sesiones de 2.5 horas)
+## Resultados de aprendizaje
 
-### Bloque 1: Spring Boot Fundamentals (Clases 1-3)
+Al finalizar el curso, el estudiante será capaz de:
 
-- **[Clase 1: Introducción a Microservicios y Spring Boot](bloque-springboot/clase1-introduccion/)**
-  - Arquitectura de microservicios vs monolitos
-  - Configuración del entorno de desarrollo (Java, Maven, IDE)
-  - Primer proyecto Spring Boot con Spring Initializr
-  - REST API básica y explorando Spring Boot Actuator
+- Diseñar e implementar microservicios con Spring Boot 3.x y Java 17.
+- Exponer APIs REST robustas con control de validaciones, manejo de errores y persistencia en PostgreSQL.
+- Integrar aplicaciones Spring con Apache Kafka para publicar y consumir eventos.
+- Introducir Kafka Streams en escenarios de analítica y transformación en tiempo real.
+- Incorporar prácticas básicas de seguridad y observabilidad en microservicios event-driven.
 
-- **Clase 2: REST APIs con Spring Web y Spring Data JPA**
-  - Creación de REST APIs completas (CRUD)
-  - Integración con PostgreSQL usando Spring Data JPA
-  - Manejo de relaciones entre entidades
-  - Pruebas con Postman y validación de datos
+---
 
-- **Clase 3: Configuración Avanzada y Manejo de Datos**
-  - Profiles de Spring Boot (dev, prod)
-  - Manejo de excepciones con @ControllerAdvice
-  - Validaciones con Bean Validation
-  - Paginación y ordenamiento con Spring Data
+## Organización por bloques
 
-### Bloque 2: Apache Kafka (Clases 4-6)
+### Bloque 1 · Fundamentos de Spring Boot
 
-- **Clase 4: Introducción a Apache Kafka y Fundamentos de Mensajería**
-  - Arquitectura de Apache Kafka (brokers, topics, partitions)
-  - Instalación de Kafka con Docker Compose
-  - Kafka CLI: crear topics, producir y consumir mensajes
-  - Conceptos: offset, consumer groups, replication
+- **[Clase 1: Introducción a Microservicios y Spring Boot](bloque-springboot/clase1-introduccion/)**  
+  Entorno de desarrollo listo, teoría de microservicios y primer proyecto Spring Boot.
+- **Clase 2: Fundamentos de REST y acceso a datos**  
+  Diferencias Spring Framework vs Spring Boot, endpoints REST iniciales y persistencia con PostgreSQL + Spring Data JPA.
+- **Clase 3: Arquitectura en capas y validación**  
+  Separación Controller/Service/Repository, DTOs, Bean Validation, manejo global de excepciones y relaciones 1:N.
 
-- **Clase 5: Productores y Consumidores en Kafka con Spring Boot**
-  - Configuración de spring-kafka en Spring Boot
-  - Implementación de Kafka Producers
-  - Implementación de Kafka Consumers
-  - Serialización y deserialización (JSON, Avro)
-  - Manejo de errores y reintentos
+### Bloque 2 · Apache Kafka y mensajería
 
-- **Clase 6: Kafka Streams y Procesamiento de Eventos**
-  - Introducción a Kafka Streams
-  - Procesamiento stateless y stateful
-  - Joins y agregaciones
-  - Casos de uso: analytics en tiempo real
+- **Clase 4: Kafka desde Spring**  
+  Arquitectura de Kafka, despliegue con Docker Compose, tooling CLI y primeros topics/productores manuales.
+- **Clase 5: Productores y consumidores con Spring Kafka**  
+  Configuración de `spring-kafka`, serialización JSON, publicación y consumo confiable desde microservicios.
+- **Clase 6: Integración entre microservicios y procesamiento**  
+  Caso e-commerce con dos microservicios comunicados vía Kafka, consumo concurrente y patrones de resiliencia básicos.
 
-### Bloque 3: Advanced Topics & Integration (Clases 7-8)
+### Bloque 3 · Streams, seguridad y cierre
 
-- **Clase 7: Seguridad y Patrones Event-Driven**
-  - Seguridad en Spring Boot (Spring Security básico)
-  - Autenticación y autorización en APIs
-  - Patrón CQRS (Command Query Responsibility Segregation)
-  - Patrón Event Sourcing
-  - Idempotencia en mensajería
-
-- **Clase 8: Monitoreo, Logging, Métricas y Proyecto Final**
-  - Spring Boot Actuator para health checks y métricas
-  - Integración con Prometheus y Grafana
-  - Logging estructurado con Logback
-  - Trazabilidad distribuida (conceptos de tracing)
-  - Proyecto final integrador: sistema completo Spring Boot + Kafka
+- **Clase 7: Kafka Streams y analítica en tiempo real**  
+  Topologías, operaciones stateless, agregaciones y tercer microservicio orientado a analytics.
+- **Clase 8: Seguridad y proyecto integrador**  
+  Introducción a JWT en Spring Security, hardening mínimo de productores/consumidores y entrega del proyecto final.
 
 ---
 
 ## Prerrequisitos
 
-### Conocimientos previos
+- Conocimientos de Java orientado a objetos, colecciones y buenas prácticas básicas.
+- Familiaridad con HTTP y conceptos REST.
+- Manejo elemental de Git y uso de línea de comandos.
+- Herramientas instaladas: Java 17, Maven 3.9+, Docker, Git e IDE (IntelliJ IDEA recomendado).  
+  Para soporte adicional revisa `bloque-springboot/clase1-introduccion/FAQ.md`, `cheatsheet.md`, [INSTALL_JAVA_MAVEN.md](INSTALL_JAVA_MAVEN.md) y [INSTALL_DOCKER.md](INSTALL_DOCKER.md).
 
-- **Java básico/intermedio** (sintaxis, POO, colecciones)
-- **Bases de datos relacionales** (SQL básico)
-- **REST APIs** (conceptos básicos de HTTP)
-- **Git básico** (clone, commit, push)
+---
 
-### Instalaciones necesarias
+## Estructura del repositorio
 
-**Bloque 1 (Spring Boot):**
-- **Java 17+** (OpenJDK o Oracle JDK) - [Guía de instalación](INSTALL_JAVA_MAVEN.md)
-- **Maven 3.9+** - [Guía de instalación](INSTALL_JAVA_MAVEN.md)
-- **IDE**: [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (recomendado), [Eclipse](https://www.eclipse.org/downloads/), o [VS Code](https://code.visualstudio.com/)
-- **Docker Desktop** (Windows/macOS) o **Docker Engine** (Linux) - [Guía de instalación](INSTALL_DOCKER.md)
-- [Git](https://git-scm.com/downloads)
-- [Postman](https://www.postman.com/downloads/) o [Insomnia](https://insomnia.rest/download)
-
-**Bloque 2 (Kafka):**
-- **Apache Kafka** (vía Docker Compose, no requiere instalación local)
-- **Kafka UI** (provectuslabs/kafka-ui - incluido en docker-compose)
-
-### Instalaciones opcionales
-
-- **IntelliJ IDEA Ultimate** (versión de pago con mejor soporte Spring Boot)
-- **Spring Tools Suite (STS)** - IDE basado en Eclipse
-- **DBeaver** o **pgAdmin** - Cliente de base de datos
-- **HTTPie** - Cliente HTTP en terminal
-- **kcat (kafkacat)** - Herramienta CLI para Kafka
-
-### Verificación del entorno
-
-```bash
-# Java
-java -version       # Debe mostrar 17 o superior
-javac -version
-
-# Maven
-mvn -version        # Debe mostrar 3.9+
-
-# Docker
-docker --version
-docker compose version
-
-# Git
-git --version
 ```
-
----
-
-## Cómo usar este repositorio
-
-Cada clase contiene:
-- **README.md** con objetivos y referencias a laboratorios
-- **practicas/** con ejercicios prácticos paso a paso
-- **desafios/** con ejercicios de refuerzo
-- **tarea/** con tarea para casa
-- **cheatsheet.md** con comandos y conceptos de referencia rápida
-
-Recomendamos clonar el repositorio y seguir las clases en orden:
-
-```bash
-git clone https://github.com/alefiengo/curso-springboot-kafka.git
-cd curso-springboot-kafka/bloque-springboot/clase1-introduccion
+bloque-springboot/
+├── clase1-introduccion/
+│   ├── README.md
+│   ├── CONCEPTOS.md
+│   ├── cheatsheet.md
+│   ├── FAQ.md
+│   └── tarea/
+│       └── README.md
+└── clase2-rest-jpa/
+    ├── README.md
+    ├── labs/
+    ├── recursos/
+    └── tarea/
 ```
-
----
-
-
-## Estructura de un Laboratorio
-
-Cada laboratorio sigue una estructura de **8 secciones** para facilitar el aprendizaje:
-
-1. **Objetivo** - Qué aprenderás en este lab
-2. **Comandos a ejecutar** - Pasos con comandos y salidas esperadas
-3. **Desglose del comando** - Explicación de cada flag/parámetro
-4. **Explicación detallada** - Qué sucede internamente
-5. **Conceptos aprendidos** - Resumen de conceptos clave
-6. **Troubleshooting** - Errores comunes y soluciones
-7. **Desafío adicional** - Ejercicio opcional para practicar
-8. **Recursos adicionales** - Links a documentación oficial
-
----
-
-## Tareas y Evaluación
 
 Cada clase incluye:
-
-### 1. Desafío Rápido (en clase)
-- Práctica rápida de 5-10 minutos
-- Refuerza conceptos aprendidos en el laboratorio
-- Se realiza al final de la sesión
-
-### 2. Tarea para Casa
-- Proyecto individual a entregar antes de la siguiente clase
-- Debe documentarse en repositorio personal (GitHub/GitLab)
-- Incluye criterios de evaluación y rúbrica
-- Se entrega vía Moodle con enlace al repositorio
-
-**[Guía de entrega de tareas →](ENTREGA_TAREAS.md)**
+- `README.md` con objetivos, contexto y enlaces a laboratorios.
+- Carpeta `labs/` con prácticas guiadas siguiendo la plantilla de ocho secciones.
+- Carpeta `tarea/` con la actividad para casa y criterios de evaluación.
+- Recursos auxiliares cuando aplique (Postman collections, guías, diagramas).
 
 ---
 
-## Casos de Uso por Industria
+## Cómo aprovechar el material
 
-El curso enfatiza ejemplos del mundo real:
-
-### Banca (Banking)
-- Procesamiento de transacciones en tiempo real
-- Detección de fraude con event streams
-- Sincronización de cuentas entre sistemas
-- Notificaciones de eventos bancarios
-
-### Retail (Comercio)
-- Gestión de pedidos (order management)
-- Actualizaciones de inventario en tiempo real
-- Notificaciones a clientes (shipping, delivery)
-- Analytics de ventas en tiempo real
-
-### Telecomunicaciones
-- Procesamiento de eventos de facturación (billing)
-- Seguimiento de uso de datos/llamadas
-- Monitoreo de red en tiempo real
-- Alertas y notificaciones a usuarios
+1. Sigue las clases en orden y completa los laboratorios antes de avanzar.
+2. Usa los labs como guía paso a paso; cada uno detalla comandos, explicaciones y troubleshooting.
+3. Documenta tus resultados en un repositorio propio para las tareas y el proyecto final.
+4. Consulta los cheatsheets y FAQ de cada clase cuando surjan dudas.
+5. Comparte experiencias y bloqueos en el foro oficial del curso.
 
 ---
 
-## Recursos Adicionales
+## Recursos recomendados
 
-### Documentación Oficial
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
-- [Spring Data JPA](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
-- [Spring Kafka](https://docs.spring.io/spring-kafka/reference/html/)
+- [Spring Boot Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+- [Spring Data JPA Reference](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
+- [Spring for Apache Kafka](https://docs.spring.io/spring-kafka/reference/html/)
 - [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
-- [Spring Security](https://docs.spring.io/spring-security/reference/index.html)
-
-### Herramientas
-- [Spring Initializr](https://start.spring.io/) - Generador de proyectos Spring Boot
-- [Kafka UI](https://github.com/provectus/kafka-ui) - Interfaz web para Kafka
-- [Postman](https://www.postman.com/) - Cliente API
-- [DBeaver](https://dbeaver.io/) - Cliente de base de datos universal
-
-### Tutoriales
-- [Baeldung Spring Boot](https://www.baeldung.com/spring-boot)
-- [Confluent Kafka Tutorials](https://developer.confluent.io/tutorials/)
 - [Spring Guides](https://spring.io/guides)
+- [Baeldung – Spring Boot](https://www.baeldung.com/spring-boot)
+- [Confluent Kafka Tutorials](https://developer.confluent.io/tutorials/)
 
 ---
 
-## Notas
+## Roadmap de clases en preparación
 
-- Este repositorio es **público** y forma parte del curso oficial de i-Quattro
-- El material está diseñado para estudiantes matriculados, pero es de libre acceso para la comunidad
-- Si te resulta útil, considera dejar una estrella en GitHub
+El material público se irá liberando progresivamente. Próximos contenidos:
+
+1. **Clase 3:** Arquitectura en capas, DTOs, validaciones y manejo de excepciones.
+2. **Clase 4:** Perfiles, configuración externa y preparación para despliegues.
+3. **Clase 5:** Productores y consumidores Kafka con Spring Boot.
+4. **Clase 6:** Integración entre microservicios y procesamiento de eventos.
+5. **Clase 7:** Kafka Streams, analítica en tiempo real y seguridad básica.
+6. **Clase 8:** Observabilidad, logging y proyecto integrador.
+
+Cada clase se publicará con README, laboratorios, tarea y recursos adicionales en cuanto estén listos.
 
 ---
 
-## Uso del Material
+Este repositorio es público. Úsalo para aprender, adaptar ejemplos a tus proyectos y compartir conocimiento con tu equipo.
 
-Este repositorio es **público** y de libre acceso para la comunidad. Siéntete libre de usarlo para aprender, practicar y compartir conocimiento.
-
----
-
-**[i-Quattro](https://www.i-quattro.com/)** | Formación en Desarrollo Backend y Arquitecturas Cloud-Native
+**i-Quattro** · Formación en desarrollo backend y arquitecturas cloud-native

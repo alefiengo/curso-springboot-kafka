@@ -85,4 +85,5 @@ logs/
 coverage/
 
 # Internal planning
-CLAUDE.md
+AGENT.md
+instructor/
