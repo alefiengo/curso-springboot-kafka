@@ -1,53 +1,37 @@
-# Tarea · CRUD Producto–Categoría (1:N)
+# Tarea · CRUD básico de productos
 
 ## Objetivo
 
-Extender el microservicio `product-service` para modelar categorías y relacionarlas con los productos, aplicando todo lo visto en clase (REST, JPA, Docker Compose y pruebas con Postman).
-
----
-
-## Descripción general
-
-1. Crea la entidad `Category` con los campos mínimos: `id`, `name`, `description`, `createdAt`, `updatedAt`.
-2. Relaciona `Product` con `Category` mediante una asociación `@ManyToOne` (cada producto pertenece a una categoría).
-3. Implementa controladores y servicios independientes para cada recurso.
-4. Expone endpoints para listar, crear, actualizar y eliminar categorías, así como para consultar los productos de una categoría específica.
-5. Documenta cómo ejecutar la solución completa (servicio + base de datos) en tu repositorio.
+Construir un CRUD simple para la entidad `Product` utilizando Spring Data JPA, Docker Compose y pruebas con Postman, consolidando todo lo aprendido en la Clase 2.
 
 ---
 
 ## Requerimientos funcionales
 
-- `POST /api/categories` crea una categoría.
-- `GET /api/categories` lista todas las categorías.
-- `GET /api/categories/{id}` entrega una categoría específica.
-- `PUT /api/categories/{id}` actualiza una categoría existente.
-- `DELETE /api/categories/{id}` elimina una categoría (validar que no existan productos asociados o manejarlo con una respuesta clara).
-- `GET /api/categories/{id}/products` lista los productos pertenecientes a la categoría.
-- `POST /api/products` permite asignar la categoría al crear un producto (por `categoryId`).
-- `PUT /api/products/{id}` permite actualizar la categoría del producto.
+- `POST /api/products` crea un producto con los campos `name`, `description`, `price`, `stock`.
+- `GET /api/products` lista todos los productos y permite filtrar por nombre con `?name=`.
+- `GET /api/products/{id}` devuelve un producto por su identificador.
+- `PUT /api/products/{id}` actualiza un producto existente (todos los campos).
+- `DELETE /api/products/{id}` elimina un producto.
 
 ---
 
 ## Requerimientos técnicos
 
-- Reutiliza el `docker-compose.yml` de clase; asegúrate de documentar cómo iniciarlo.
-- Utiliza DTOs para requests y responses en ambas entidades.
-- Maneja códigos HTTP adecuados (`201`, `200`, `204`, `400`, `404`).
-- Incluye validaciones básicas (por ejemplo: nombre obligatorio, longitud mínima o máxima, precio mayor a cero).
-- Mantén los repositorios en `dev.alefiengo.productservice.repository` y las nuevas clases en paquetes coherentes (`service`, `controller`, `dto`).
+- Utiliza el repositorio proporcionado (`ProductRepository`) directamente en el controlador.
+- Persiste los datos en PostgreSQL (usa el `docker-compose.yml` de la clase).
+- Documenta cómo iniciar y detener la base de datos.
+- Incluye en tu README de la tarea los comandos ejecutados y las evidencias (capturas o salidas).
 
 ---
 
 ## Entregables
 
-1. Repositorio público (GitHub/GitLab) con:
-   - Código fuente.
-   - `README.md` con instrucciones de ejecución, variables y colecciones Postman.
-   - Carpeta `docs/` opcional para diagramas o notas adicionales.
-2. Colección Postman o equivalente (`.json`) con ejemplos para todos los endpoints.
-3. Archivo `.env.sample` si defines variables de entorno adicionales.
-4. Checklist marcado en el README explicando qué puntos completaste.
+1. Repositorio público con:
+   - Código fuente actualizado (`ProductController`, `Product` y cualquier ajuste menores).
+   - `README.md` dentro de `clase2-rest-jpa/` con pasos, comandos y capturas.
+   - Colección Postman o cURLs documentados para probar cada endpoint.
+2. Archivo `.env.sample` si utilizas variables de entorno adicionales.
 
 ---
 
@@ -55,50 +39,32 @@ Extender el microservicio `product-service` para modelar categorías y relaciona
 
 | Criterio | Peso |
 |----------|------|
-| Correctitud funcional de endpoints y relación 1:N | 35% |
-| Diseño de capas y uso adecuado de DTOs y servicios | 25% |
-| Validaciones y manejo de errores con códigos HTTP correctos | 20% |
-| Documentación del repositorio y colecciones Postman | 10% |
-| Buenas prácticas de Git (estructura, `.gitignore`, commits claros) | 10% |
+| CRUD funcionando (GET, POST, PUT, DELETE) | 40% |
+| Uso correcto de Spring Data JPA | 20% |
+| Documentación (README, evidencias) | 20% |
+| Colección Postman o comandos cURL | 10% |
+| Buenas prácticas Git (estructura, commits, `.gitignore`) | 10% |
 
-**Puntaje total:** 100%
+**Total:** 100%
 
 ---
 
 ## Pasos sugeridos
 
-1. Diseña los DTOs para `Category` (request/response).
-2. Crea el repositorio `CategoryRepository` y el servicio correspondiente.
-3. Implementa los controladores de categorías y actualiza el controlador de productos para aceptar `categoryId`.
-4. Agrega consultas personalizadas si necesitas filtrar productos por categoría o nombre.
-5. Prueba todos los endpoints con Postman y exporta la colección.
-6. Documenta cómo levantar Docker Compose y cómo ejecutar el servicio.
+1. Genera datos de ejemplo usando Postman o cURL.
+2. Verifica en PostgreSQL que se persisten correctamente (`SELECT * FROM products;`).
+3. Documenta los endpoints con capturas o ejemplos de respuesta JSON.
+4. Realiza commits incrementales explicando los cambios (`feat: implementar PUT products`).
+5. Empuja tu rama principal (`git push`) y verifica que el repositorio sea público.
 
 ---
 
-## Reglas y recomendaciones
+## Preguntas frecuentes
 
-- Trabaja de manera individual. Cita cualquier recurso externo que utilices.
-- Mantén el proyecto con Java 17 y Spring Boot 3.x.
-- No incluyas credenciales reales; usa variables de entorno o valores ejemplo.
-- Usa commits con formato `feat: ...`, `fix: ...`, `docs: ...`, etc.
-- Si encuentras problemas, documéntalos en el README y explica cómo los abordarías.
+- **¿Debo generar DTOs?** No, eso se abordará en la Clase 3. Trabaja directamente con la entidad `Product`.
+- **¿Debo manejar validaciones avanzadas?** No en esta tarea. Basta con asegurarse de que los datos requeridos se envían correctamente.
+- **¿Qué hago si quiero añadir algo extra (paginación, OrderBy, etc.)?** Puedes hacerlo, pero deja claramente documentado qué agregaste y asegúrate de que el CRUD básico funcione primero.
 
 ---
 
-## Entrega
-
-Sube a Moodle un documento con:
-
-```
-Nombre completo:
-Repositorio:
-Colección Postman:
-Notas adicionales:
-```
-
-Incluye también capturas opcionales (por ejemplo, tablas en PostgreSQL o respuestas de Postman) si deseas reforzar la evidencia.
-
----
-
-¡Éxitos con la tarea! El objetivo es que llegues a la próxima clase con una base sólida para aplicar validaciones, manejo de excepciones y arquitectura en capas.
+Entrega el enlace de tu repositorio en Moodle antes de la Clase 3.

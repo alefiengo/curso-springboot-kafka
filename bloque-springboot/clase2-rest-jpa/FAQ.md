@@ -35,14 +35,13 @@ Confirma que el contenedor está en ejecución (`docker compose ps`). Si usas WS
 ## Errores de la API
 
 ### `HTTP 400 Bad Request`
-El JSON enviado no coincide con los campos del DTO. Revisa nombres, tipos y asegúrate de enviar números sin comillas. Usa Postman para validar el payload.
+El JSON enviado no coincide con los campos de la entidad `Product`. Revisa nombres, tipos y asegúrate de enviar números sin comillas. Usa Postman para validar el payload.
 
 ### `HTTP 404 Not Found` al actualizar o eliminar
 El `id` indicado no existe. Consulta los productos disponibles con `GET /api/products` antes de ejecutar `PUT` o `DELETE`.
 
 ### `No serializer found for class Product`
-Estás retornando la entidad `Product` directamente. Devuelve `ProductResponse` o agrega getters si quieres exponer campos adicionales (lo veremos en Clase 3 con DTOs más elaborados).
-
+Asegúrate de que la entidad tenga getters y setters públicos. Jackson necesita acceso a las propiedades para serializarlas correctamente.
 ---
 
 ## Esquema de base de datos
@@ -58,8 +57,7 @@ spring:
 Reinicia la aplicación después de cualquier cambio de configuración.
 
 ### `could not execute statement` al guardar
-Revisa las restricciones de la entidad: campos `@Column(nullable = false)` no pueden recibir `null`. Verifica que el DTO envía todos los valores requeridos.
-
+Revisa las restricciones de la entidad: campos `@Column(nullable = false)` no pueden recibir `null`. Verifica que el JSON contenga todos los valores requeridos.
 ---
 
 ## Docker

@@ -40,12 +40,12 @@ public class ProductServiceApplication {
 | Anotación          | Uso | Descripción |
 |--------------------|-----|-------------|
 | `@Component`       | Genérico | Bean detectado por `@ComponentScan`. Base para otras anotaciones. |
-| `@Controller`      | Web (MVC) | Controladores que devuelven vistas (HTML). |
-| `@RestController`  | Web (REST) | Combina `@Controller` + `@ResponseBody`; expone JSON/XML. |
-| `@Service`         | Negocio | Encapsula lógica de dominio. Se inyecta en controladores u otros servicios. |
-| `@Repository`      | Datos | Encapsula acceso a DB, traduce excepciones a `DataAccessException`. |
+| `@RestController`  | Web (REST) | Controladores que exponen endpoints JSON/XML. |
+| `@Repository`      | Datos | Interfaz que Spring Data implementa para acceder a la base de datos. |
 | `@Configuration`   | Configuración | Clases que definen beans manualmente (`@Bean`). |
 | `@Entity`          | Persistencia | Mapea una clase a una tabla con JPA. |
+
+> En la Clase 3 introduciremos `@Service` y otros estereotipos orientados a capas adicionales.
 
 **Convención:** nombre de paquetes en minúsculas (`dev.alefiengo.productservice`), clases y métodos en inglés.
 
@@ -53,44 +53,40 @@ public class ProductServiceApplication {
 
 ## 4. Inversión de Control (IoC) e Inyección de Dependencias (DI)
 
-- **IoC**: el framework controla la creación y ciclo de vida de objetos (beans). Nosotros declaramos *qué* necesitamos, no *cómo* crearlo.
-- **DI**: Spring inyecta dependencias en constructores, campos o métodos.
+- **IoC**: el framework controla la creación y ciclo de vida de los beans.
+- **DI en esta clase**: inyectamos el `ProductRepository` directamente en el controlador para consumirlo sin crear instancias manuales.
 
 ```java
-@Service
-public class ProductService {
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
     private final ProductRepository repository;
 
-    public ProductService(ProductRepository repository) { // inyección por constructor
+    public ProductController(ProductRepository repository) {
         this.repository = repository;
     }
 
-    public List<Product> findAll() {
+    @GetMapping
+    public List<Product> list() {
         return repository.findAll();
     }
 }
 ```
-
-- El contenedor Spring crea `ProductRepository` (gracias a `JpaRepository`) y lo entrega al `ProductService` sin que tengamos que instanciarlo manualmente.
 
 ---
 
 ## 5. Flujo de una petición REST
 
 ```
-Cliente HTTP ──> DispatcherServlet ──> Controlador (@RestController)
-                                        ↓
-                                   Servicio (@Service)
-                                        ↓
-                                 Repositorio (@Repository)
-                                        ↓
-                               Base de datos (PostgreSQL)
+Cliente HTTP ──> DispatcherServlet ──> Controlador (@RestController) ──> Repositorio (@Repository) ──> Base de datos
 ```
 
 1. **DispatcherServlet** enruta la petición al controlador adecuado.
-2. **Controlador** valida/parcea la entrada y delega en el servicio.
-3. **Servicio** encapsula reglas de negocio y coordina transacciones.
-4. **Repositorio** ejecuta operaciones JPA sobre la base de datos.
+2. **Controlador** parsea la entrada y llama al repositorio.
+3. **Repositorio** ejecuta la operación JPA correspondiente.
+
+(En la Clase 3 agregaremos capas adicionales como servicios, DTOs y manejadores globales para escalar la arquitectura.)
 
 ---
 

@@ -60,11 +60,11 @@ SELECT * FROM products;
 
 ## Spring Data JPA
 
-- `JpaRepository<Product, Long>`: expone `findAll`, `findById`, `save`, `deleteById`.
+- `JpaRepository<Product, Long>` expone `findAll`, `findById`, `save`, `deleteById`.
 - Métodos derivados útiles:
   - `findByNameContainingIgnoreCase(String name)`
-  - `findByPriceBetween(BigDecimal min, BigDecimal max)`
-- `@Transactional(readOnly = true)` para consultas, `@Transactional` estándar para escritura.
+  - `existsById(Long id)`
+- Consume el repositorio directamente desde el controlador en esta clase.
 
 ---
 
@@ -101,7 +101,6 @@ curl -X DELETE http://localhost:8080/api/products/1
 | Término | Descripción |
 |---------|-------------|
 | Controlador REST | Clase anotada con `@RestController` que expone endpoints HTTP. |
-| DTO | Objeto de transferencia de datos usado para separar la API de la capa de persistencia. |
 | Repository | Interfaz de Spring Data que agrupa operaciones CRUD y consultas derivadas. |
 | Entity | Clase anotada con `@Entity` y mapeada a una tabla de base de datos. |
-| Transacción | Unidad atómica de trabajo que garantiza consistencia en la base de datos. |
+| ResponseStatusException | Excepción que permite devolver códigos HTTP personalizados desde el controlador. |

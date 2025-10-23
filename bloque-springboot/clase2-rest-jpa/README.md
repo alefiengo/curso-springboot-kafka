@@ -10,7 +10,7 @@ Clase dedicada a pasar del proyecto vacío creado en la sesión anterior a un mi
 - Construir endpoints REST con distintas firmas (`@PathVariable`, `@RequestParam`, `@RequestBody`) y métodos HTTP.
 - Preparar un entorno de base de datos con PostgreSQL mediante Docker Compose.
 - Modelar entidades JPA y repositorios para persistir información.
-- Implementar un CRUD completo sobre productos y verificarlo con Postman o herramientas equivalentes.
+- Implementar un CRUD básico consumiendo directamente `ProductRepository` y verificarlo con Postman o herramientas equivalentes.
 
 ---
 
@@ -40,8 +40,8 @@ Antes de iniciar los laboratorios revisa los **[Conceptos de la clase](CONCEPTOS
    Levantar la base de datos sin instalación local y comprobar conexión.
 6. **Lab 04 · Entidad y repositorio JPA**  
    Añadir dependencias, crear entidad `Product` y repositorio Spring Data.
-7. **Lab 05 · CRUD completo**  
-   Construir endpoints `GET/POST/PUT/DELETE`, probarlos y validar persistencia.
+7. **Lab 05 · CRUD básico**  
+   Consumir el repositorio directamente desde el controlador y verificar todas las operaciones.
 
 Cada laboratorio sigue la plantilla oficial de ocho secciones para asegurar consistencia pedagógica.
 
@@ -59,15 +59,15 @@ Cada laboratorio sigue la plantilla oficial de ocho secciones para asegurar cons
   Configura el contenedor de base de datos, variables de entorno y cliente SQL.
 - **[Lab 04 · Entidad y repositorio JPA](labs/04-entity-jpa/)**  
   Introduce Spring Data JPA, mapea la entidad `Product` y prueba el repositorio.
-- **[Lab 05 · CRUD REST completo](labs/05-crud-completo/)**  
-  Expone operaciones completas sobre productos y valida la persistencia end to end.
+- **[Lab 05 · CRUD básico con Spring Data JPA](labs/05-crud-completo/)**  
+  Conecta el controlador directamente con el repositorio para CRUD.
 
 ---
 
 ## Tarea para casa
 
-- **[CRUD con relación Producto-Categoría](tarea/README.md)**  
-  Amplía el servicio para gestionar categorías y vincular productos (relación 1:N). Incluye criterios de evaluación, checklist y formato de entrega.
+- **[CRUD básico de productos](tarea/README.md)**  
+  Completa el CRUD directo con Spring Data JPA y documenta tus pruebas con Postman.
 
 ---
 
@@ -87,7 +87,7 @@ Antes de la siguiente clase asegúrate de:
 
 - Completar los cinco laboratorios con código ejecutable.
 - Documentar en tu repositorio personal cómo ejecutar el servicio y la base de datos.
-- Resolver la tarea de relación producto-categoría.
+- Resolver la tarea de CRUD básico y dejar evidencias (Postman/cURL).
 - Registrar dudas o bloqueos para el espacio de Q&A inicial de la Clase 3.
 
-La Clase 3 se enfoca en arquitectura en capas, validaciones y manejo de excepciones para profesionalizar el servicio construido aquí.
+La Clase 3 se enfoca en refactorizar este CRUD hacia una arquitectura en capas con validaciones, manejo de errores y relación 1:N.

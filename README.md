@@ -40,9 +40,9 @@ Al finalizar el curso, el estudiante será capaz de:
 - **[Clase 1: Introducción a Microservicios y Spring Boot](bloque-springboot/clase1-introduccion/)**  
   Entorno de desarrollo listo, teoría de microservicios y primer proyecto Spring Boot.
 - **[Clase 2: REST APIs y Persistencia con Spring Data JPA](bloque-springboot/clase2-rest-jpa/)**  
-  Diferencias Spring Framework vs Spring Boot, endpoints REST iniciales y persistencia con PostgreSQL + Spring Data JPA.
-- **Clase 3: Arquitectura en capas y validación**  
-  Separación Controller/Service/Repository, DTOs, Bean Validation, manejo global de excepciones y relaciones 1:N.
+  CRUD básico desde el controlador consumiendo directamente `ProductRepository` y persistiendo en PostgreSQL.
+- **[Clase 3: Arquitectura en capas y validación](bloque-springboot/clase3-arquitectura-capas/)**  
+  Refactor a capas con DTOs y servicios, Bean Validation, manejo global de excepciones y relación Product–Category.
 
 ### Bloque 2 · Apache Kafka y mensajería
 
@@ -91,6 +91,14 @@ bloque-springboot/
 │   ├── labs/
 │   ├── recursos/
 │   └── tarea/
+├── clase3-arquitectura-capas/
+│   ├── README.md
+│   ├── CONCEPTOS.md
+│   ├── cheatsheet.md
+│   ├── FAQ.md
+│   ├── labs/
+│   ├── recursos/
+│   └── tarea/
 └── ... (clases siguientes)
 ```
 
@@ -129,12 +137,11 @@ Cada clase incluye:
 
 El material público se irá liberando progresivamente. Próximos contenidos:
 
-1. **Clase 3:** Arquitectura en capas, DTOs, validaciones y manejo de excepciones.
-2. **Clase 4:** Perfiles, configuración externa y preparación para despliegues.
-3. **Clase 5:** Productores y consumidores Kafka con Spring Boot.
-4. **Clase 6:** Integración entre microservicios y procesamiento de eventos.
-5. **Clase 7:** Kafka Streams, analítica en tiempo real y seguridad básica.
-6. **Clase 8:** Observabilidad, logging y proyecto integrador.
+1. **Clase 4:** Perfiles, configuración externa y preparación para despliegues.
+2. **Clase 5:** Productores y consumidores Kafka con Spring Boot.
+3. **Clase 6:** Integración entre microservicios y procesamiento de eventos.
+4. **Clase 7:** Kafka Streams, analítica en tiempo real y seguridad básica.
+5. **Clase 8:** Observabilidad, logging y proyecto integrador.
 
 Cada clase se publicará con README, laboratorios, tarea y recursos adicionales en cuanto estén listos.
 
