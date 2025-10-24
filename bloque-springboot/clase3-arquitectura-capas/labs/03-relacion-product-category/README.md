@@ -25,6 +25,18 @@ mkdir -p src/main/java/dev/alefiengo/productservice/exception
 
 ### Entidad Category
 ```java
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -48,6 +60,10 @@ public class Category {
 
 ### Ajustes en Product
 ```java
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 @ManyToOne(fetch = FetchType.LAZY)
 @JoinColumn(name = "category_id", nullable = false)
 private Category category;
@@ -55,6 +71,11 @@ private Category category;
 
 ### Repositorios
 ```java
+import java.util.List;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByNameIgnoreCase(String name);
 }
@@ -67,6 +88,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 ### DTOs
 ```java
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
 public record CategoryRequest(
     @NotBlank
     @Size(max = 80)
@@ -147,6 +177,17 @@ public final class ProductMapper {
 
 ### Actualización de ProductService
 ```java
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import dev.alefiengo.productservice.exception.ResourceNotFoundException;
+import dev.alefiengo.productservice.model.Category;
+import dev.alefiengo.productservice.model.Product;
+import dev.alefiengo.productservice.repository.CategoryRepository;
+import dev.alefiengo.productservice.repository.ProductRepository;
+
 @Service
 public class ProductService {
 
@@ -202,6 +243,19 @@ public class ProductService {
 
 ### Service y Controller
 ```java
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -230,6 +284,16 @@ public class CategoryController {
 ```
 
 ```java
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import dev.alefiengo.productservice.exception.CategoryAlreadyExistsException;
+import dev.alefiengo.productservice.exception.ResourceNotFoundException;
+import dev.alefiengo.productservice.model.Category;
+import dev.alefiengo.productservice.repository.CategoryRepository;
+import dev.alefiengo.productservice.repository.ProductRepository;
+
 @Service
 public class CategoryService {
 
@@ -281,6 +345,16 @@ public class CategoryAlreadyExistsException extends RuntimeException {
 ### Actualización del handler global
 Añade esta sección en `GlobalExceptionHandler` (creado en el Lab 02) para responder `409 Conflict` cuando la categoría exista.
 ```java
+import java.time.Instant;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import dev.alefiengo.productservice.exception.CategoryAlreadyExistsException;
+import dev.alefiengo.productservice.exception.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
+
 @ExceptionHandler(CategoryAlreadyExistsException.class)
 public ResponseEntity<ErrorResponse> handleCategoryExists(CategoryAlreadyExistsException ex, HttpServletRequest request) {
     return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -327,12 +401,3 @@ public ResponseEntity<ErrorResponse> handleCategoryExists(CategoryAlreadyExistsE
 
 - [Spring Data JPA – Relationships](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.entity-persistence)
 - [Hibernate Entity Graphs](https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html#fetching-strategies-fetchgraphs)
-
-```java
-// Ubicar en dev.alefiengo.productservice.exception
-public class CategoryAlreadyExistsException extends RuntimeException {
-    public CategoryAlreadyExistsException(String name) {
-        super("La categoría " + name + " ya existe");
-    }
-}
-```

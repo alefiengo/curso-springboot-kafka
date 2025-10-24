@@ -67,6 +67,9 @@ public class ProductController {
 
 ### DTO inicial (ubicados en `dev.alefiengo.productservice.dto`)
 ```java
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+
 public record ProductRequest(
     String name,
     String description,
@@ -115,6 +118,15 @@ public final class ProductMapper {
 
 ### Service refactorizado
 ```java
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import dev.alefiengo.productservice.exception.ResourceNotFoundException;
+import dev.alefiengo.productservice.model.Product;
+import dev.alefiengo.productservice.repository.ProductRepository;
+
 @Service
 public class ProductService {
 

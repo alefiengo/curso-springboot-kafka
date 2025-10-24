@@ -81,6 +81,14 @@ spring:
 ### Paso 4: Actualizar ProductRequest con validaciones
 
 ```java
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
 public record ProductRequest(
         @NotBlank(message = "{product.name.notblank}")
         @Size(max = 120)
@@ -102,6 +110,15 @@ public record ProductRequest(
 ### Paso 5: Aplicar @Valid en el controller
 
 ```java
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import jakarta.validation.Valid;
+
 @PostMapping
 public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
