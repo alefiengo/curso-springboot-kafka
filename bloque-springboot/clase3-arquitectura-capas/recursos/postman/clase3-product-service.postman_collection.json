@@ -1,0 +1,49 @@
+{
+  "info": {
+    "_postman_id": "c07e2e6f-9fc5-4d97-9d43-232db1f7b1b5",
+    "name": "Clase 3 - Product Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Categorias - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Electrónica\",\n  \"description\": \"Dispositivos y gadgets\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/categories",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "categories"]
+        }
+      }
+    },
+    {
+      "name": "Productos - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Laptop\",\n  \"description\": \"Ultrabook 2025\",\n  \"price\": 1299.99,\n  \"stock\": 5,\n  \"categoryId\": 1\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "products"]
+        }
+      }
+    }
+  ]
+}

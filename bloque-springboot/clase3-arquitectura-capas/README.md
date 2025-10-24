@@ -37,14 +37,9 @@ Antes de iniciar las prácticas revisa los **[Conceptos de la clase](CONCEPTOS.m
    Crear `@RestControllerAdvice` y unificar respuestas de error.
 5. **[Lab 03 · Relación Product–Category (1:N)](labs/03-relacion-product-category/)**  
    Añadir entidad `Category`, relación 1:N y endpoints asociados.
-
-> Los laboratorios se publicarán en `labs/` siguiendo la plantilla de ocho secciones.
-
 ---
 
 ## Laboratorios de la clase
-
-Los materiales paso a paso estarán disponibles en `labs/` cuando se finalice la redacción:
 
 - [labs/00-refactor-capas-servicio/](labs/00-refactor-capas-servicio/README.md)
 - [labs/01-validaciones-bean-validation/](labs/01-validaciones-bean-validation/README.md)
@@ -65,7 +60,7 @@ Los materiales paso a paso estarán disponibles en `labs/` cuando se finalice la
 - **Conceptos de la clase:** [CONCEPTOS.md](CONCEPTOS.md)
 - **Cheatsheet:** [cheatsheet.md](cheatsheet.md)
 - **FAQ:** [FAQ.md](FAQ.md)
-- **Diagrama de capas / flujo HTTP:** `instructor/clase2/diagramas/clase2-diagramas.drawio` (para repasar la estructura antes del refactor).
+- **Colección Postman:** [recursos/postman/clase3-product-service.postman_collection.json](recursos/postman/clase3-product-service.postman_collection.json)
 - **Documentación oficial:**
   - [Spring MVC Controllers](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-controller)
   - [Bean Validation 3.0 (JSR 380)](https://jakarta.ee/specifications/bean-validation/3.0/)
@@ -75,7 +70,7 @@ Los materiales paso a paso estarán disponibles en `labs/` cuando se finalice la
 
 ## Próximos pasos
 
-- Completar los labs (cuando estén disponibles) y reflejar los cambios en el repositorio personal.
+- Completar los labs y reflejar los cambios en el repositorio personal.
 - Preparar dudas sobre validaciones y manejo de errores para la sesión de Q&A.
 - Mantener actualizado el README de tu proyecto con instrucciones para ejecutar el servicio y probar errores.
 
