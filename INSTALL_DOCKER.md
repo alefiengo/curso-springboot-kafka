@@ -84,10 +84,10 @@ docker compose version
 
 ## 6. Troubleshooting rápido
 
-- `docker: command not found`: verifica que el binario esté en el `PATH`; reinstala si fue una instalación parcial.  
-- `permission denied while trying to connect to the Docker daemon`: agrega tu usuario al grupo `docker` (Linux) o ejecuta la terminal como administrador (Windows).  
-- Docker Desktop no arranca: reinicia el servicio desde la interfaz o revisa los requisitos de virtualización (BIOS/UEFI).  
-- `docker compose` no existe: actualiza Docker; el plugin Compose v2 viene incluido. Alternativamente usa `docker-compose` (v1) si la versión es antigua.
+- `docker: command not found`: verifica que el binario esté en el `PATH`; reinstala si fue una instalación parcial.
+- `permission denied while trying to connect to the Docker daemon`: agrega tu usuario al grupo `docker` (Linux) o ejecuta la terminal como administrador (Windows).
+- Docker Desktop no arranca: reinicia el servicio desde la interfaz o revisa los requisitos de virtualización (BIOS/UEFI).
+- `docker compose` no existe: actualiza Docker Desktop o Docker Engine; el plugin Compose v2 viene incluido en versiones recientes. Si tienes una versión muy antigua, actualiza antes de continuar con el curso.
 
 ---
 
