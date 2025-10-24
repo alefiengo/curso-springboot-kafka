@@ -2,45 +2,56 @@
 
 ## 1. Objetivo
 
-Crear un manejador global de excepciones (`@RestControllerAdvice
-public class GlobalExceptionHandler {
+Crear un manejador global de excepciones (`@RestControllerAdvice`) que capture errores del sistema y devuelva respuestas JSON consistentes con códigos HTTP apropiados.
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponse.notFound(ex.getMessage(), request.getRequestURI()));
-    }
+---
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String message = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
-            .map(err -> err.getField() + ": " + err.getDefaultMessage())
-            .collect(Collectors.joining("; "));
-        return ResponseEntity.badRequest()
-            .body(ErrorResponse.validation(message, request.getRequestURI()));
-    }
+## 2. Comandos a ejecutar
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponse.generic("Ocurrió un error inesperado", request.getRequestURI()));
-    }
-}
 ```bash
 # 1. Ubicarse en el proyecto
 cd ~/workspace/product-service
 
 # 2. Crear paquete exception
 mkdir -p src/main/java/dev/alefiengo/productservice/exception
+
+# 3. Crear ErrorResponse
+code src/main/java/dev/alefiengo/productservice/exception/ErrorResponse.java
+
+# 4. Crear ResourceNotFoundException
+code src/main/java/dev/alefiengo/productservice/exception/ResourceNotFoundException.java
+
+# 5. Crear GlobalExceptionHandler
+code src/main/java/dev/alefiengo/productservice/exception/GlobalExceptionHandler.java
+
+# 6. Actualizar ProductService para lanzar excepciones
+code src/main/java/dev/alefiengo/productservice/service/ProductService.java
+
+# 7. Recompilar y ejecutar
+mvn clean spring-boot:run
 ```
 
 ---
 
-## 3. Desglose del código
+## 3. Desglose del comando
 
-### ErrorResponse
+| Componente | Descripción |
+|------------|-------------|
+| `@RestControllerAdvice` | Anotación que marca la clase como manejador global de excepciones para controladores REST |
+| `@ExceptionHandler` | Define qué excepción captura cada método del handler |
+| `ResourceNotFoundException` | Excepción personalizada para recursos no encontrados (404) |
+| `MethodArgumentNotValidException` | Excepción de Spring cuando falla Bean Validation |
+| `ErrorResponse` | DTO que define el formato uniforme de errores |
+| `HttpServletRequest` | Permite acceder a información de la petición (URI, headers) |
+| `ResponseEntity.status()` | Construye respuesta HTTP con código de estado específico |
+| `getBindingResult()` | Obtiene los errores de validación de campos |
+
+---
+
+## 4. Explicación detallada
+
+### Paso 1: Crear ErrorResponse
+
 ```java
 package dev.alefiengo.productservice.exception;
 
@@ -68,7 +79,20 @@ public record ErrorResponse(
 }
 ```
 
-### Handler global
+### Paso 2: Crear ResourceNotFoundException
+
+```java
+package dev.alefiengo.productservice.exception;
+
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+```
+
+### Paso 3: Crear GlobalExceptionHandler
+
 ```java
 package dev.alefiengo.productservice.exception;
 
@@ -80,7 +104,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import dev.alefiengo.productservice.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -111,21 +134,29 @@ public class GlobalExceptionHandler {
 }
 ```
 
----
+### Paso 4: Actualizar ProductService
 
-## 4. Explicación detallada
+Reemplaza `ResponseStatusException` por `ResourceNotFoundException`:
 
-1. **`ErrorResponse`** define el formato de error: timestamp, status HTTP, código, mensaje y path.
-2. **Handlers específicos**: distinguen entre recursos no encontrados, errores de validación y errores genéricos.
-3. **`@RestControllerAdvice`** hace que el handler aplique a todos los controladores REST del proyecto.
+```java
+public ProductResponse findById(Long id) {
+    Product product = repository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+    return toResponse(product);
+}
+```
+
+**Resultado**: Todas las excepciones retornan JSON consistente con timestamp, status, código, mensaje y path.
 
 ---
 
 ## 5. Conceptos aprendidos
 
-- Uniformar la respuesta de errores mejora la observabilidad y las integraciones front-end.
-- `MethodArgumentNotValidException` captura los errores de Bean Validation.
+- Manejo centralizado de excepciones con `@RestControllerAdvice`.
+- Formato uniforme de errores mejora la observabilidad y las integraciones front-end.
+- `MethodArgumentNotValidException` captura los errores de Bean Validation automáticamente.
 - Manejo proactivo de `Exception` permite devolver mensajes controlados incluso cuando algo inesperado ocurre.
+- Códigos HTTP apropiados: 404 (Not Found), 400 (Bad Request), 500 (Internal Server Error).
 
 ---
 
@@ -134,6 +165,7 @@ public class GlobalExceptionHandler {
 - **El handler no se ejecuta**: verifica el paquete (debe ser escaneado por Spring) y la anotación `@RestControllerAdvice`.
 - **Mensaje vacío en validaciones**: comprueba que la lógica de `Collectors.joining` recorra errores con `getDefaultMessage` y que existan mensajes definidos.
 - **Stacktrace expuesto**: evita devolver `ex.toString()` al usuario; usa mensajes resumidos.
+- **ResourceNotFoundException no se resuelve**: verifica imports y que la clase esté en el paquete correcto.
 
 ---
 
@@ -147,3 +179,4 @@ Agrega un handler adicional para `DataIntegrityViolationException` de Spring (vi
 
 - [Spring @ControllerAdvice](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-controller-advice)
 - [Error Handling for REST](https://www.baeldung.com/exception-handling-for-rest-with-spring)
+- [HTTP Status Codes](https://developer.mozilla.org/es/docs/Web/HTTP/Status)

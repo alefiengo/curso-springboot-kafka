@@ -6,73 +6,131 @@ Agregar validaciones a los DTOs de `product-service` usando Bean Validation, ase
 
 ---
 
-## 2. Pasos
+## 2. Comandos a ejecutar
 
-1. **Agregar dependencia (si no se añadió antes)**  
-   Abre `pom.xml` en tu IDE y dentro del bloque `<dependencies>` añade:
+```bash
+# 1. Ubicarse en el proyecto
+cd ~/workspace/product-service
+
+# 2. Editar pom.xml
+code pom.xml
+
+# 3. Crear archivo de mensajes de validación
+code src/main/resources/ValidationMessages.properties
+
+# 4. Actualizar application.yml
+code src/main/resources/application.yml
+
+# 5. Editar DTO ProductRequest
+code src/main/java/dev/alefiengo/productservice/model/dto/ProductRequest.java
+
+# 6. Actualizar ProductController
+code src/main/java/dev/alefiengo/productservice/controller/ProductController.java
+
+# 7. Recompilar y ejecutar
+mvn clean spring-boot:run
+```
+
+---
+
+## 3. Desglose del comando
+
+| Componente | Descripción |
+|------------|-------------|
+| `spring-boot-starter-validation` | Dependencia que incluye Hibernate Validator y Jakarta Bean Validation API |
+| `@Valid` | Activa la validación automática en parámetros de controller |
+| `@NotBlank` | Valida que el string no sea null, vacío ni solo espacios |
+| `@Size(max = 120)` | Limita la longitud máxima del string |
+| `@NotNull` | Valida que el campo no sea null |
+| `@DecimalMin` | Valida que el decimal sea mayor o igual al valor especificado |
+| `@PositiveOrZero` | Valida que el número sea positivo o cero |
+| `message = "{product.name.notblank}"` | Referencia a mensaje personalizado en ValidationMessages.properties |
+| `spring.messages.basename` | Configura el archivo de mensajes personalizados |
+
+---
+
+## 4. Explicación detallada
+
+### Paso 1: Agregar dependencia (si no se añadió antes)
+
+Abre `pom.xml` en tu IDE y dentro del bloque `<dependencies>` añade:
    ```xml
    <dependency>
        <groupId>org.springframework.boot</groupId>
        <artifactId>spring-boot-starter-validation</artifactId>
    </dependency>
    ```
-2. **Crear (o actualizar) `ValidationMessages.properties`**  
-   Ubicado en `src/main/resources/`:
-   ```properties
-   product.name.notblank=El nombre es obligatorio
-   product.price.min=El precio debe ser mayor que cero
-   product.stock.min=El stock no puede ser negativo
-   ```
-3. **Configurar `application.yml` para usar mensajes personalizados**  
-   ```yaml
-   spring:
-     messages:
-       basename: ValidationMessages
-   ```
-4. **Actualizar el DTO `ProductRequest`** (mismo paquete que el lab anterior):
-   ```java
-   public record ProductRequest(
-           @NotBlank(message = "{product.name.notblank}")
-           @Size(max = 120)
-           String name,
 
-           @Size(max = 255)
-           String description,
+### Paso 2: Crear ValidationMessages.properties
 
-           @NotNull
-           @DecimalMin(value = "0.0", inclusive = false, message = "{product.price.min}")
-           BigDecimal price,
+Ubicado en `src/main/resources/`:
+```properties
+product.name.notblank=El nombre es obligatorio
+product.price.min=El precio debe ser mayor que cero
+product.stock.min=El stock no puede ser negativo
+```
 
-           @NotNull
-           @PositiveOrZero(message = "{product.stock.min}")
-           Integer stock
-   ) {}
-   ```
-5. **Aplicar `@Valid` en el controller**:
-   ```java
-   @PostMapping
-   public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
-       return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
-   }
+### Paso 3: Configurar application.yml
 
-   @PutMapping("/{id}")
-   public ResponseEntity<ProductResponse> update(@PathVariable Long id,
-                                                 @Valid @RequestBody ProductRequest request) {
-       return ResponseEntity.ok(service.update(id, request));
-   }
-   ```
+```yaml
+spring:
+  messages:
+    basename: ValidationMessages
+```
+
+### Paso 4: Actualizar ProductRequest con validaciones
+
+```java
+public record ProductRequest(
+        @NotBlank(message = "{product.name.notblank}")
+        @Size(max = 120)
+        String name,
+
+        @Size(max = 255)
+        String description,
+
+        @NotNull
+        @DecimalMin(value = "0.0", inclusive = false, message = "{product.price.min}")
+        BigDecimal price,
+
+        @NotNull
+        @PositiveOrZero(message = "{product.stock.min}")
+        Integer stock
+) {}
+```
+
+### Paso 5: Aplicar @Valid en el controller
+
+```java
+@PostMapping
+public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+}
+
+@PutMapping("/{id}")
+public ResponseEntity<ProductResponse> update(@PathVariable Long id,
+                                              @Valid @RequestBody ProductRequest request) {
+    return ResponseEntity.ok(service.update(id, request));
+}
+```
+
+**Resultado**: Spring valida automáticamente antes de ejecutar el método. Si hay errores, responde con `400 Bad Request` y detalles de validación.
 
 ---
 
-## 3. Conceptos aprendidos
+## 5. Conceptos aprendidos
 
 - Cómo activar Bean Validation en los endpoints REST.
 - Uso de archivos de propiedades para mensajes reutilizables.
 - Integración natural entre Spring MVC y `@Valid` / `jakarta.validation`.
 
+- Validaciones declarativas con anotaciones de Bean Validation.
+- Mensajes de error personalizados y localizables.
+- Respuesta automática con código HTTP 400 en caso de validación fallida.
+
 ---
 
-## 4. Troubleshooting
+## 6. Troubleshooting
 
 - **Las validaciones no se ejecutan**: confirma que agregaste `@Valid` en el controller y que la app se reinició tras editar el `pom.xml`.
 - **Los mensajes aparecen en inglés**: verifica `spring.messages.basename` y que el archivo se llame `ValidationMessages.properties`.
@@ -80,13 +138,13 @@ Agregar validaciones a los DTOs de `product-service` usando Bean Validation, ase
 
 ---
 
-## 5. Desafío adicional/final
+## 7. Desafío adicional/final
 
 Añade reglas para validar nombres sin números (`@Pattern`) o combinar `@Positive` con controles adicionales en el service.
 
 ---
 
-## 6. Recursos adicionales
+## 8. Recursos adicionales
 
 - [Jakarta Bean Validation 3.0](https://jakarta.ee/specifications/bean-validation/3.0/)
 - [Spring Boot Validation Guide](https://spring.io/guides/gs/validating-form-input/)

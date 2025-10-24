@@ -6,7 +6,7 @@ Conectar el controlador REST directamente con `ProductRepository` para lograr un
 
 ---
 
-## 2. Pasos
+## 2. Comandos a ejecutar
 
 ```bash
 # 1. Ubicarse en el proyecto
@@ -94,7 +94,24 @@ public class ProductController {
 
 ---
 
-## 3. Explicación detallada
+## 3. Desglose del comando
+
+| Componente | Descripción |
+|------------|-------------|
+| `cd ~/workspace/product-service` | Navega al directorio del proyecto |
+| `code src/main/.../ProductController.java` | Abre el controlador en el editor |
+| `@RestController` | Marca la clase como controlador REST |
+| `@RequestMapping("/api/products")` | Prefijo de ruta para todos los endpoints |
+| `ProductRepository repository` | Inyección de dependencia del repositorio |
+| `repository.findAll()` | Método de Spring Data JPA para obtener todos los registros |
+| `repository.findById(id)` | Busca un registro por ID, retorna `Optional<Product>` |
+| `repository.save(entity)` | Guarda o actualiza una entidad |
+| `repository.deleteById(id)` | Elimina un registro por ID |
+| `ResponseStatusException` | Lanza excepciones HTTP con códigos de estado |
+
+---
+
+## 4. Explicación detallada
 
 1. **Uso directo de `ProductRepository`**: el controlador delega en Spring Data JPA para todas las operaciones.
 2. **Búsqueda filtrada**: `findByNameContainingIgnoreCase` permite filtrar por nombre sin implementar lógica adicional.
@@ -103,15 +120,17 @@ public class ProductController {
 
 ---
 
-## 4. Conceptos aprendidos
+## 5. Conceptos aprendidos
 
 - Cómo exponer un CRUD completo sin capas adicionales.
 - Uso directo de repositorios Spring Data en un controlador REST.
 - Manejo básico de errores HTTP (`404`) con `ResponseStatusException`.
+- Operaciones CRUD básicas: Create, Read, Update, Delete.
+- Búsqueda con query methods de Spring Data JPA.
 
 ---
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 - **`ResponseStatusException` no se resuelve**: importa `org.springframework.web.server.ResponseStatusException`.
 - **Los datos no se actualizan**: asegúrate de que el contenedor de PostgreSQL esté en ejecución (`docker compose ps`).
@@ -119,14 +138,14 @@ public class ProductController {
 
 ---
 
-## 6. Desafío adicional/final
+## 7. Desafío adicional/final
 
 - Añade `GET /api/products/count` que devuelva el total de registros usando `repository.count()`.
 - Implementa `DELETE /api/products` para borrar todos los productos (`repository.deleteAll()`).
 
 ---
 
-## 7. Recursos adicionales
+## 8. Recursos adicionales
 
 - [Spring Data Repositories](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.repositories)
 - [ResponseStatusException](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/server/ResponseStatusException.html)
