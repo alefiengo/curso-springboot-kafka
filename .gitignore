@@ -84,6 +84,7 @@ logs/
 # Coverage
 coverage/
 
-# Internal planning
+# Internal planning and AI guidance
 AGENT.md
+CLAUDE.md
 instructor/
