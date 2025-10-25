@@ -37,6 +37,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import dev.alefiengo.productservice.model.Product;
+
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -64,6 +66,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import dev.alefiengo.productservice.model.Category;
+
 @ManyToOne(fetch = FetchType.LAZY)
 @JoinColumn(name = "category_id", nullable = false)
 private Category category;
@@ -76,11 +80,22 @@ import java.util.List;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import dev.alefiengo.productservice.model.Category;
+import dev.alefiengo.productservice.model.Product;
+
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByNameIgnoreCase(String name);
 }
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    @EntityGraph(attributePaths = "category")
+    @Override
+    List<Product> findAll();
+
+    @EntityGraph(attributePaths = "category")
+    List<Product> findByNameContainingIgnoreCase(String name);
+
     @EntityGraph(attributePaths = "category")
     List<Product> findByCategoryId(Long categoryId);
 }
@@ -147,11 +162,19 @@ public record ProductResponse(
 
 ### Mapper actualizado
 ```java
+import dev.alefiengo.productservice.dto.ProductRequest;
+import dev.alefiengo.productservice.dto.ProductResponse;
+import dev.alefiengo.productservice.model.Category;
+import dev.alefiengo.productservice.model.Product;
+
 public final class ProductMapper {
 
-    private ProductMapper() { }
+    private ProductMapper() {
+        throw new AssertionError("Utility class, no debe instanciarse");
+    }
 
     public static ProductResponse toResponse(Product product) {
+        Category category = product.getCategory();
         return new ProductResponse(
             product.getId(),
             product.getName(),
@@ -160,8 +183,8 @@ public final class ProductMapper {
             product.getStock(),
             product.getCreatedAt(),
             product.getUpdatedAt(),
-            product.getCategory() != null ? product.getCategory().getId() : null,
-            product.getCategory() != null ? product.getCategory().getName() : null
+            category != null ? category.getId() : null,
+            category != null ? category.getName() : null
         );
     }
 
@@ -178,17 +201,21 @@ public final class ProductMapper {
 ### Actualización de ProductService
 ```java
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import dev.alefiengo.productservice.dto.ProductRequest;
+import dev.alefiengo.productservice.dto.ProductResponse;
 import dev.alefiengo.productservice.exception.ResourceNotFoundException;
+import dev.alefiengo.productservice.mapper.ProductMapper;
 import dev.alefiengo.productservice.model.Category;
 import dev.alefiengo.productservice.model.Product;
 import dev.alefiengo.productservice.repository.CategoryRepository;
 import dev.alefiengo.productservice.repository.ProductRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -205,7 +232,7 @@ public class ProductService {
             : productRepository.findByNameContainingIgnoreCase(name);
         return products.stream()
             .map(ProductMapper::toResponse)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public ProductResponse findById(Long id) {
@@ -214,6 +241,7 @@ public class ProductService {
         return ProductMapper.toResponse(product);
     }
 
+    @Transactional
     public ProductResponse create(ProductRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new ResourceNotFoundException("Categoría " + request.categoryId() + " no encontrada"));
@@ -223,25 +251,27 @@ public class ProductService {
         return ProductMapper.toResponse(saved);
     }
 
+    @Transactional
     public ProductResponse update(Long id, ProductRequest request) {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto " + id + " no encontrado"));
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new ResourceNotFoundException("Categoría " + request.categoryId() + " no encontrada"));
         ProductMapper.updateEntity(request, product, category);
-        return ProductMapper.toResponse(product);
+        Product updated = productRepository.save(product);
+        return ProductMapper.toResponse(updated);
     }
 
+    @Transactional
     public void delete(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Producto " + id + " no encontrado");
-        }
-        productRepository.deleteById(id);
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Producto " + id + " no encontrado"));
+        productRepository.delete(product);
     }
 }
 ```
 
-### Service y Controller
+### CategoryController
 ```java
 import java.util.List;
 
@@ -254,6 +284,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.alefiengo.productservice.dto.CategoryRequest;
+import dev.alefiengo.productservice.dto.CategoryResponse;
+import dev.alefiengo.productservice.dto.ProductResponse;
+import dev.alefiengo.productservice.service.CategoryService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -283,18 +317,25 @@ public class CategoryController {
 }
 ```
 
+### CategoryService
 ```java
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import dev.alefiengo.productservice.dto.CategoryRequest;
+import dev.alefiengo.productservice.dto.CategoryResponse;
+import dev.alefiengo.productservice.dto.ProductResponse;
 import dev.alefiengo.productservice.exception.CategoryAlreadyExistsException;
 import dev.alefiengo.productservice.exception.ResourceNotFoundException;
+import dev.alefiengo.productservice.mapper.ProductMapper;
 import dev.alefiengo.productservice.model.Category;
 import dev.alefiengo.productservice.repository.CategoryRepository;
 import dev.alefiengo.productservice.repository.ProductRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -311,6 +352,7 @@ public class CategoryService {
             .toList();
     }
 
+    @Transactional
     public CategoryResponse create(CategoryRequest request) {
         if (categoryRepository.existsByNameIgnoreCase(request.name())) {
             throw new CategoryAlreadyExistsException(request.name());

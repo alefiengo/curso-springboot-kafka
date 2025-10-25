@@ -27,6 +27,24 @@ for dir in "${dirs[@]}"; do mkdir -p "$dir"; done
 
 ### Controller mínimo
 ```java
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import dev.alefiengo.productservice.dto.ProductRequest;
+import dev.alefiengo.productservice.dto.ProductResponse;
+import dev.alefiengo.productservice.service.ProductService;
+
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -90,9 +108,14 @@ public record ProductResponse(
 
 ### Mapper manual
 ```java
+import dev.alefiengo.productservice.dto.ProductRequest;
+import dev.alefiengo.productservice.dto.ProductResponse;
+import dev.alefiengo.productservice.model.Product;
+
 public final class ProductMapper {
 
     private ProductMapper() {
+        throw new AssertionError("Utility class, no debe instanciarse");
     }
 
     public static ProductResponse toResponse(Product product) {
@@ -119,15 +142,19 @@ public final class ProductMapper {
 ### Service refactorizado
 ```java
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import dev.alefiengo.productservice.dto.ProductRequest;
+import dev.alefiengo.productservice.dto.ProductResponse;
 import dev.alefiengo.productservice.exception.ResourceNotFoundException;
+import dev.alefiengo.productservice.mapper.ProductMapper;
 import dev.alefiengo.productservice.model.Product;
 import dev.alefiengo.productservice.repository.ProductRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository repository;
@@ -142,7 +169,7 @@ public class ProductService {
             : repository.findByNameContainingIgnoreCase(name);
         return products.stream()
             .map(ProductMapper::toResponse)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public ProductResponse findById(Long id) {
@@ -151,6 +178,7 @@ public class ProductService {
         return ProductMapper.toResponse(product);
     }
 
+    @Transactional
     public ProductResponse create(ProductRequest request) {
         Product product = new Product();
         ProductMapper.updateEntity(request, product);
@@ -158,18 +186,20 @@ public class ProductService {
         return ProductMapper.toResponse(saved);
     }
 
+    @Transactional
     public ProductResponse update(Long id, ProductRequest request) {
         Product product = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto " + id + " no encontrado"));
         ProductMapper.updateEntity(request, product);
-        return ProductMapper.toResponse(product);
+        Product updated = repository.save(product);
+        return ProductMapper.toResponse(updated);
     }
 
+    @Transactional
     public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Producto " + id + " no encontrado");
-        }
-        repository.deleteById(id);
+        Product product = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Producto " + id + " no encontrado"));
+        repository.delete(product);
     }
 }
 ```
