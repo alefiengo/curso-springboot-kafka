@@ -22,7 +22,7 @@ code src/main/resources/ValidationMessages.properties
 code src/main/resources/application.yml
 
 # 5. Editar DTO ProductRequest
-code src/main/java/dev/alefiengo/productservice/model/dto/ProductRequest.java
+code src/main/java/dev/alefiengo/productservice/dto/ProductRequest.java
 
 # 6. Actualizar ProductController
 code src/main/java/dev/alefiengo/productservice/controller/ProductController.java
@@ -80,7 +80,10 @@ spring:
 
 ### Paso 4: Actualizar ProductRequest con validaciones
 
+**ProductRequest.java** (editar archivo en `dev.alefiengo.productservice.dto`):
 ```java
+package dev.alefiengo.productservice.dto;
+
 import java.math.BigDecimal;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -109,15 +112,13 @@ public record ProductRequest(
 
 ### Paso 5: Aplicar @Valid en el controller
 
-```java
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+**ProductController.java** - Agregar import y actualizar métodos `create()` y `update()`:
 
+```java
+// Agregar este import al inicio del archivo:
 import jakarta.validation.Valid;
+
+// Actualizar los métodos create y update:
 
 @PostMapping
 public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {

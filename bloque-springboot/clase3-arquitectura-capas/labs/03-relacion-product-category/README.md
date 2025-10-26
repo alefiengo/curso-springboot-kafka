@@ -24,7 +24,11 @@ mkdir -p src/main/java/dev/alefiengo/productservice/exception
 ## 3. Desglose del código
 
 ### Entidad Category
+
+**Category.java** (crear en `dev.alefiengo.productservice.model`):
 ```java
+package dev.alefiengo.productservice.model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +40,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import dev.alefiengo.productservice.model.Product;
 
 @Entity
 @Table(name = "categories")
@@ -56,36 +58,93 @@ public class Category {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
-    // getters/setters
+    // Getters y setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 }
 ```
 
 ### Ajustes en Product
+
+**Product.java** - Agregar imports y campo `category` en la entidad existente:
+
 ```java
+// Agregar estos imports al inicio del archivo:
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-import dev.alefiengo.productservice.model.Category;
+// En la clase Product, agregar este campo después de los campos existentes:
 
 @ManyToOne(fetch = FetchType.LAZY)
 @JoinColumn(name = "category_id", nullable = false)
 private Category category;
+
+// Agregar getter y setter:
+
+public Category getCategory() {
+    return category;
+}
+
+public void setCategory(Category category) {
+    this.category = category;
+}
 ```
 
 ### Repositorios
+
+**CategoryRepository.java** (crear en `dev.alefiengo.productservice.repository`):
 ```java
+package dev.alefiengo.productservice.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import dev.alefiengo.productservice.model.Category;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+    boolean existsByNameIgnoreCase(String name);
+}
+```
+
+**ProductRepository.java** (actualizar en `dev.alefiengo.productservice.repository`):
+```java
+package dev.alefiengo.productservice.repository;
+
 import java.util.List;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import dev.alefiengo.productservice.model.Category;
 import dev.alefiengo.productservice.model.Product;
-
-public interface CategoryRepository extends JpaRepository<Category, Long> {
-    boolean existsByNameIgnoreCase(String name);
-}
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
@@ -102,14 +161,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 ```
 
 ### DTOs
-```java
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
-import jakarta.validation.constraints.DecimalMin;
+**CategoryRequest.java** (crear en `dev.alefiengo.productservice.dto`):
+```java
+package dev.alefiengo.productservice.dto;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 public record CategoryRequest(
@@ -120,12 +177,30 @@ public record CategoryRequest(
     @Size(max = 255)
     String description
 ) {}
+```
+
+**CategoryResponse.java** (crear en `dev.alefiengo.productservice.dto`):
+```java
+package dev.alefiengo.productservice.dto;
 
 public record CategoryResponse(
     Long id,
     String name,
     String description
 ) {}
+```
+
+**ProductRequest.java** (actualizar en `dev.alefiengo.productservice.dto`):
+```java
+package dev.alefiengo.productservice.dto;
+
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 public record ProductRequest(
     @NotBlank
@@ -146,6 +221,14 @@ public record ProductRequest(
     @NotNull
     Long categoryId
 ) {}
+```
+
+**ProductResponse.java** (actualizar en `dev.alefiengo.productservice.dto`):
+```java
+package dev.alefiengo.productservice.dto;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 public record ProductResponse(
     Long id,
@@ -161,7 +244,11 @@ public record ProductResponse(
 ```
 
 ### Mapper actualizado
+
+**ProductMapper.java** (actualizar en `dev.alefiengo.productservice.mapper`):
 ```java
+package dev.alefiengo.productservice.mapper;
+
 import dev.alefiengo.productservice.dto.ProductRequest;
 import dev.alefiengo.productservice.dto.ProductResponse;
 import dev.alefiengo.productservice.model.Category;
@@ -199,7 +286,11 @@ public final class ProductMapper {
 ```
 
 ### Actualización de ProductService
+
+**ProductService.java** (actualizar en `dev.alefiengo.productservice.service`):
 ```java
+package dev.alefiengo.productservice.service;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -272,7 +363,11 @@ public class ProductService {
 ```
 
 ### CategoryController
+
+**CategoryController.java** (crear en `dev.alefiengo.productservice.controller`):
 ```java
+package dev.alefiengo.productservice.controller;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -318,7 +413,11 @@ public class CategoryController {
 ```
 
 ### CategoryService
+
+**CategoryService.java** (crear en `dev.alefiengo.productservice.service`):
 ```java
+package dev.alefiengo.productservice.service;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -375,8 +474,10 @@ public class CategoryService {
 
 ```
 
+**CategoryAlreadyExistsException.java** (crear en `dev.alefiengo.productservice.exception`):
 ```java
-// Ubicar en dev.alefiengo.productservice.exception
+package dev.alefiengo.productservice.exception;
+
 public class CategoryAlreadyExistsException extends RuntimeException {
     public CategoryAlreadyExistsException(String name) {
         super("La categoría " + name + " ya existe");
@@ -385,17 +486,14 @@ public class CategoryAlreadyExistsException extends RuntimeException {
 ```
 
 ### Actualización del handler global
-Añade esta sección en `GlobalExceptionHandler` (creado en el Lab 02) para responder `409 Conflict` cuando la categoría exista.
+
+**GlobalExceptionHandler.java** - Agregar este método a la clase existente en `dev.alefiengo.productservice.exception`:
+
 ```java
-import java.time.Instant;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
+// Agregar este import si no existe:
 import dev.alefiengo.productservice.exception.CategoryAlreadyExistsException;
-import dev.alefiengo.productservice.exception.ErrorResponse;
-import jakarta.servlet.http.HttpServletRequest;
+
+// Agregar este método dentro de la clase GlobalExceptionHandler:
 
 @ExceptionHandler(CategoryAlreadyExistsException.class)
 public ResponseEntity<ErrorResponse> handleCategoryExists(CategoryAlreadyExistsException ex, HttpServletRequest request) {

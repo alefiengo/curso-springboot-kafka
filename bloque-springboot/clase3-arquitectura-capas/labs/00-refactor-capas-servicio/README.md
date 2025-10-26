@@ -84,9 +84,12 @@ public class ProductController {
 ```
 
 ### DTO inicial (ubicados en `dev.alefiengo.productservice.dto`)
+
+**ProductRequest.java**:
 ```java
+package dev.alefiengo.productservice.dto;
+
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 public record ProductRequest(
     String name,
@@ -94,6 +97,14 @@ public record ProductRequest(
     BigDecimal price,
     Integer stock
 ) {}
+```
+
+**ProductResponse.java**:
+```java
+package dev.alefiengo.productservice.dto;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 public record ProductResponse(
     Long id,
@@ -107,7 +118,11 @@ public record ProductResponse(
 ```
 
 ### Mapper manual
+
+**ProductMapper.java** (ubicar en `dev.alefiengo.productservice.mapper`):
 ```java
+package dev.alefiengo.productservice.mapper;
+
 import dev.alefiengo.productservice.dto.ProductRequest;
 import dev.alefiengo.productservice.dto.ProductResponse;
 import dev.alefiengo.productservice.model.Product;
@@ -130,17 +145,22 @@ public final class ProductMapper {
         );
     }
 
-    public static void updateEntity(ProductRequest request, Product entity) {
+    public static Product toEntity(ProductRequest request, Product entity) {
         entity.setName(request.name());
         entity.setDescription(request.description());
         entity.setPrice(request.price());
         entity.setStock(request.stock());
+        return entity;
     }
 }
 ```
 
 ### Service refactorizado
+
+**ProductService.java** (ubicar en `dev.alefiengo.productservice.service`):
 ```java
+package dev.alefiengo.productservice.service;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -181,8 +201,7 @@ public class ProductService {
     @Transactional
     public ProductResponse create(ProductRequest request) {
         Product product = new Product();
-        ProductMapper.updateEntity(request, product);
-        Product saved = repository.save(product);
+        Product saved = repository.save(ProductMapper.toEntity(request, product));
         return ProductMapper.toResponse(saved);
     }
 
@@ -190,8 +209,7 @@ public class ProductService {
     public ProductResponse update(Long id, ProductRequest request) {
         Product product = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto " + id + " no encontrado"));
-        ProductMapper.updateEntity(request, product);
-        Product updated = repository.save(product);
+        Product updated = repository.save(ProductMapper.toEntity(request, product));
         return ProductMapper.toResponse(updated);
     }
 
@@ -205,8 +223,11 @@ public class ProductService {
 ```
 
 ### Excepción reutilizable
+
+**ResourceNotFoundException.java** (ubicar en `dev.alefiengo.productservice.exception`):
 ```java
-// Ubicar en dev.alefiengo.productservice.exception
+package dev.alefiengo.productservice.exception;
+
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
         super(message);
