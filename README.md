@@ -46,19 +46,19 @@ Al finalizar el curso, el estudiante será capaz de:
 
 ### Bloque 2 · Apache Kafka y mensajería
 
-- **Clase 4: Kafka desde Spring**  
-  Arquitectura de Kafka, despliegue con Docker Compose, tooling CLI y primeros topics/productores manuales.
-- **Clase 5: Productores y consumidores con Spring Kafka**  
-  Configuración de `spring-kafka`, serialización JSON, publicación y consumo confiable desde microservicios.
-- **Clase 6: Integración entre microservicios y procesamiento**  
-  Caso e-commerce con dos microservicios comunicados vía Kafka, consumo concurrente y patrones de resiliencia básicos.
+- **Clase 4: Perfiles, Configuración y Apache Kafka**
+  Preparación de `product-service` para producción con profiles y Spring Boot Actuator. Introducción a Apache Kafka: arquitectura, despliegue con Docker Compose y comandos CLI para crear topics del dominio e-commerce.
+- **Clase 5: Productores y Consumidores con Spring Kafka**
+  Integración de `spring-kafka` en `product-service` (eventos de productos) y creación de `order-service` como segundo microservicio que publica eventos de órdenes. Serialización JSON y configuración de productores/consumidores.
+- **Clase 6: Integración entre Microservicios**
+  Creación de `inventory-service` como tercer microservicio. Comunicación asíncrona completa: order-service publica órdenes, inventory-service valida stock y confirma/rechaza, implementando el patrón de eventos de dominio en e-commerce.
 
 ### Bloque 3 · Streams, seguridad y cierre
 
-- **Clase 7: Kafka Streams y analítica en tiempo real**  
-  Topologías, operaciones stateless, agregaciones y tercer microservicio orientado a analytics.
-- **Clase 8: Seguridad y proyecto integrador**  
-  Introducción a JWT en Spring Security, hardening mínimo de productores/consumidores y entrega del proyecto final.
+- **Clase 7: Kafka Streams y Patrones Event-Driven**
+  Kafka Streams en `inventory-service` para procesamiento en tiempo real. Introducción de `analytics-service` como read model (CQRS). Patrones event-driven: CQRS implementado y Event Sourcing como concepto teórico.
+- **Clase 8: Seguridad y Observabilidad**
+  Implementación de JWT con Spring Security en los tres microservicios principales. Observabilidad avanzada con Actuator, logging estructurado y métricas. Consolidación del sistema completo y entrega del proyecto integrador.
 
 ---
 
@@ -137,13 +137,25 @@ Cada clase incluye:
 
 El material público se irá liberando progresivamente. Próximos contenidos:
 
-1. **Clase 4:** Perfiles, configuración externa y preparación para despliegues.
-2. **Clase 5:** Productores y consumidores Kafka con Spring Boot.
-3. **Clase 6:** Integración entre microservicios y procesamiento de eventos.
-4. **Clase 7:** Kafka Streams, analítica en tiempo real y seguridad básica.
-5. **Clase 8:** Observabilidad, logging y proyecto integrador.
+1. **Clase 4:** Perfiles, configuración con Actuator e introducción a Apache Kafka (arquitectura, Docker Compose, CLI).
+2. **Clase 5:** Productores y consumidores con spring-kafka. Creación de `order-service` (segundo microservicio).
+3. **Clase 6:** Integración completa. Creación de `inventory-service` (tercer microservicio) y comunicación event-driven.
+4. **Clase 7:** Kafka Streams, CQRS con `analytics-service` y patrones event-driven avanzados.
+5. **Clase 8:** Seguridad con JWT, observabilidad avanzada y proyecto integrador final.
 
 Cada clase se publicará con README, laboratorios, tarea y recursos adicionales en cuanto estén listos.
+
+### Arquitectura final del sistema
+
+Al completar el curso, habrás construido un sistema e-commerce completo con:
+
+- **product-service**: Catálogo de productos con eventos de creación/actualización
+- **order-service**: Gestión de pedidos que publica eventos de órdenes
+- **inventory-service**: Control de stock con validación asíncrona y Kafka Streams
+- **analytics-service**: Estadísticas en tiempo real (CQRS read model)
+- **Apache Kafka**: Bus de eventos conectando los microservicios
+- **PostgreSQL**: Base de datos independiente por microservicio
+- **Spring Security**: Autenticación JWT en todos los servicios
 
 ---
 
