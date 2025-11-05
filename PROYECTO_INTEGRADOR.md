@@ -1,43 +1,117 @@
 # Proyecto Integrador · Spring Boot & Apache Kafka
 
-Referencia pública del proyecto integrador que se muestra como hilo conductor del curso. El código completo se publicará en un repositorio separado para que los estudiantes lo consulten cuando necesiten ejemplos o configuraciones avanzadas.
+El proyecto integrador del curso consiste en construir **progresivamente** un sistema de e-commerce basado en microservicios. A lo largo de las 8 clases, cada estudiante desarrollará los componentes del sistema mediante laboratorios prácticos.
+
+**Importante**: No hay un repositorio separado de "proyecto integrador". El proyecto **ES** el trabajo acumulativo de todas las clases y labs.
 
 ---
 
 ## Objetivo
 
-Mostrar un escenario de comercio electrónico que evoluciona desde un servicio monolítico hasta una arquitectura de microservicios conectados mediante Kafka, reforzando los temas de cada bloque.
+Construir un sistema de comercio electrónico que evoluciona desde un único microservicio (`product-service`) hasta una arquitectura completa de microservicios conectados mediante Apache Kafka, aplicando los conceptos de cada clase.
 
 ---
 
-## Roadmap de versiones
+## Evolución del sistema por bloque
 
-| Versión | Bloque / Clase | Enfoque principal |
-|---------|----------------|-------------------|
-| v1.0 | Bloque 1 (Clases 1-3) | REST + JPA + PostgreSQL, validaciones y manejo de errores. |
-| v2.0 | Bloque 2 (Clases 4-6) | Separación en microservicios, mensajería con Kafka, consumidores y streams. |
-| v3.0 | Bloque 3 (Clases 7-8) | Seguridad básica (JWT), observabilidad y demo final. |
+### Bloque 1: Spring Boot Fundamentals (Clases 1-4)
 
-Cada versión incorpora los componentes trabajados en clase (información detallada se entregará en el repositorio dedicado).
+**Estado actual**: ✅ **Completado hasta Clase 4**
+
+| Clase | Componente | Avances |
+|-------|------------|---------|
+| 1 | Setup | Entorno de desarrollo configurado |
+| 2 | `product-service` | REST API + JPA + PostgreSQL |
+| 3 | `product-service` | Arquitectura en capas, DTOs, validaciones, relación Product-Category |
+| 4 | `product-service` | Perfiles (dev/prod), Actuator, variables de entorno. Kafka instalado (Docker) |
+
+**Resultado**: Un microservicio completo y production-ready con catálogo de productos.
+
+### Bloque 2: Apache Kafka y Mensajería (Clases 5-6)
+
+**Estado**: 📋 **Planificado**
+
+| Clase | Componentes | Avances |
+|-------|-------------|---------|
+| 5 | `product-service` + `order-service` | Productores y consumidores Kafka, eventos de productos y órdenes |
+| 6 | `order-service` + `inventory-service` | Comunicación event-driven completa, validación de stock |
+
+**Resultado**: Sistema de 3 microservicios con mensajería asíncrona.
+
+### Bloque 3: Streams, Seguridad y Cierre (Clases 7-8)
+
+**Estado**: 📋 **Planificado**
+
+| Clase | Componentes | Avances |
+|-------|-------------|---------|
+| 7 | `analytics-service` | Kafka Streams, CQRS, agregación de datos |
+| 8 | Todos los servicios | JWT, Spring Security, proyecto final |
+
+**Resultado**: Sistema completo e-commerce con 4 microservicios securizados.
 
 ---
 
-## Componentes previstos
+## Arquitectura final del sistema
 
-- **Servicios**: order-service, inventory-service, analytics-service (más servicios de apoyo si el tiempo lo permite).
-- **Kafka**: topics para órdenes creadas/confirmadas, actualizaciones de inventario y flujo de analítica.
-- **Persistencia**: PostgreSQL por servicio para favorecer el encapsulamiento.
-- **Seguridad**: autenticación con JWT en endpoints críticos (bloque 3).
-- **Observabilidad**: Spring Boot Actuator, métricas y logging estructurado.
+Al completar el curso, habrás construido:
+
+### Microservicios
+
+1. **product-service** (Clases 2-4)
+   - Catálogo de productos y categorías
+   - REST API completa (CRUD)
+   - Eventos: `ecommerce.products.created`, `ecommerce.products.updated`
+
+2. **order-service** (Clases 5-6)
+   - Gestión de órdenes de compra
+   - Publica: `ecommerce.orders.placed`
+   - Consume: `ecommerce.orders.confirmed`, `ecommerce.orders.rejected`
+
+3. **inventory-service** (Clase 6)
+   - Control de inventario y stock
+   - Consume: `ecommerce.orders.placed`
+   - Publica: `ecommerce.orders.confirmed`, `ecommerce.orders.rejected`, `ecommerce.inventory.updated`
+
+4. **analytics-service** (Clase 7)
+   - Kafka Streams para agregación
+   - CQRS: Vista materializada de métricas de negocio
+   - Dashboard de ventas y productos más vendidos
+
+### Infraestructura
+
+- **Apache Kafka**: Bus de eventos (topics del dominio e-commerce)
+- **PostgreSQL**: Base de datos independiente por microservicio (`product_db`, `order_db`, `inventory_db`, `analytics_db`)
+- **Docker Compose**: Infraestructura completa dockerizada
+- **Spring Boot Actuator**: Monitoreo y health checks
+
+### Seguridad (Clase 8)
+
+- **JWT**: Autenticación en todos los servicios
+- **Spring Security**: Protección de endpoints
+- **API Gateway** (opcional): Punto único de entrada
 
 ---
 
-## Recursos
+## Entrega final
 
-- Repositorio de referencia: se comunicará al finalizar cada bloque.
-- Colecciones Postman y docker-compose específicos acompañarán a cada versión publicada.
-- La rúbrica y requisitos del proyecto final se anunciarán junto con el material de la Clase 8.
+La evaluación del proyecto integrador se realizará en la **Clase 8**, donde cada estudiante presentará:
+
+1. **Código fuente**: Repositorio personal con los 4 microservicios
+2. **Docker Compose**: Sistema completo ejecutable
+3. **Colección Postman**: Pruebas de todos los endpoints
+4. **Documentación**: README con arquitectura e instrucciones
+
+**Criterios de evaluación**: Se publicarán en la Clase 8 junto con la rúbrica detallada.
 
 ---
 
-Este documento resume el avance del proyecto integrador visible para los estudiantes; detalles operativos y planificación interna se mantienen en archivos privados.
+## Trabajo acumulativo
+
+Cada clase construye sobre la anterior. Es fundamental:
+
+- ✅ Completar los labs de cada clase antes de avanzar
+- ✅ Realizar las tareas para casa
+- ✅ Mantener tu repositorio personal actualizado
+- ✅ Hacer preguntas en el foro si algo no funciona
+
+**No hay atajos**: El proyecto integrador ES la suma de todo tu trabajo en el curso.
