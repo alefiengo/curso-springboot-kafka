@@ -379,30 +379,43 @@ Topic: ecommerce.orders.placed
 
 Ambos reciben los mismos eventos, pero los procesan independientemente.
 
-#### 7. Zookeeper
+#### 7. KRaft (Kafka Raft)
 
-**Zookeeper** coordina el cluster de Kafka:
+**KRaft** es el modo moderno de consenso de Kafka que elimina la dependencia de Zookeeper.
+
+**¿Qué hace KRaft?**
 
 - Elección de leader de particiones
-- Almacenamiento de metadata (topics, brokers, offsets antiguos)
+- Almacenamiento de metadata (topics, brokers, configuración)
 - Detección de brokers caídos
+- Gestión del cluster
 
-**Diagrama**:
+**Arquitectura KRaft**:
 
 ```
-┌────────────┐
-│ Zookeeper  │
-│   2181     │
-└──────┬─────┘
-       │ Coordina
-       ↓
 ┌────────────────────────────────┐
-│      Kafka Cluster             │
-│ Broker 1  Broker 2  Broker 3   │
+│      Kafka Cluster (KRaft)     │
+│                                │
+│  ┌─────────┐ ┌─────────┐      │
+│  │Broker 1 │ │Broker 2 │      │
+│  │+Ctrl    │ │+Ctrl    │      │
+│  │ 9092    │ │ 9092    │      │
+│  └─────────┘ └─────────┘      │
+│                                │
+│  Controller quorum interno     │
 └────────────────────────────────┘
 ```
 
-**IMPORTANTE**: Desde Kafka 3.3 existe **KRaft** (Kafka Raft) que reemplaza Zookeeper. En este curso usamos Zookeeper por estabilidad y documentación, pero en producción moderna considera migrar a KRaft.
+**Ventajas de KRaft**:
+
+- Arquitectura más simple (un solo servicio)
+- Menos recursos (no necesita Zookeeper)
+- Inicio más rápido
+- Mejor escalabilidad
+- Production-ready desde Kafka 3.3+
+- **Modo único desde Kafka 4.0+**
+
+**IMPORTANTE**: En este curso usamos **KRaft** por ser la arquitectura moderna y oficial de Apache Kafka.
 
 ---
 
@@ -611,17 +624,19 @@ Read Model:
 
 ### Parte 5: Preparación para los siguientes labs
 
-En el **Lab 04** desplegaremos Kafka con Docker Compose:
+En el **Lab 04** desplegaremos Kafka en modo KRaft con Docker Compose:
 
 ```yaml
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-
   kafka:
     image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
 ```
 
 En el **Lab 05** crearemos topics usando Kafka CLI:
@@ -646,7 +661,7 @@ En **Clase 5** integraremos spring-kafka en los microservicios.
 - **Consumer**: Aplicación que lee eventos de topics
 - **Consumer Group**: Conjunto de consumidores que procesan un topic en paralelo
 - **Offset**: Identificador único secuencial de mensajes en partición
-- **Zookeeper**: Coordinador del cluster de Kafka
+- **KRaft**: Modo moderno de consenso de Kafka sin dependencia de Zookeeper
 - **Event-Driven Architecture**: Comunicación asíncrona basada en eventos
 - **Eventual Consistency**: Consistencia lograda después de un tiempo
 - **Eventos vs Comandos**: Past tense (eventos) vs imperativo (comandos)

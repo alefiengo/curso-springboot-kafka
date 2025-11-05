@@ -12,8 +12,7 @@ Introducir la entidad `Category`, establecer una relación `@ManyToOne` desde `P
 # 1. Ubicarse en el proyecto
 cd ~/workspace/product-service
 
-# 2. Crear paquetes adicionales
-mkdir -p src/main/java/dev/alefiengo/productservice/category
+# 2. Crear paquete exception si no existe
 mkdir -p src/main/java/dev/alefiengo/productservice/exception
 
 # 3. Actualizar DTOs, mapper y servicios en tu IDE
@@ -275,12 +274,13 @@ public final class ProductMapper {
         );
     }
 
-    public static void updateEntity(ProductRequest request, Product entity, Category category) {
+    public static Product toEntity(ProductRequest request, Product entity, Category category) {
         entity.setName(request.name());
         entity.setDescription(request.description());
         entity.setPrice(request.price());
         entity.setStock(request.stock());
         entity.setCategory(category);
+        return entity;
     }
 }
 ```
@@ -337,8 +337,7 @@ public class ProductService {
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new ResourceNotFoundException("Categoría " + request.categoryId() + " no encontrada"));
         Product product = new Product();
-        ProductMapper.updateEntity(request, product, category);
-        Product saved = productRepository.save(product);
+        Product saved = productRepository.save(ProductMapper.toEntity(request, product, category));
         return ProductMapper.toResponse(saved);
     }
 
@@ -348,8 +347,7 @@ public class ProductService {
             .orElseThrow(() -> new ResourceNotFoundException("Producto " + id + " no encontrado"));
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new ResourceNotFoundException("Categoría " + request.categoryId() + " no encontrada"));
-        ProductMapper.updateEntity(request, product, category);
-        Product updated = productRepository.save(product);
+        Product updated = productRepository.save(ProductMapper.toEntity(request, product, category));
         return ProductMapper.toResponse(updated);
     }
 
