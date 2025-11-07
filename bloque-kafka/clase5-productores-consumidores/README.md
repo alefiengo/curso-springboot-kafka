@@ -18,9 +18,9 @@ Esta clase integra Apache Kafka con Spring Boot usando spring-kafka, implementan
 
 ## Requisitos previos
 
-- Clase 4 completada (Kafka funcionando con Docker Compose)
+- Clase 4 completada (Kafka en modo KRaft funcionando con Docker Compose)
 - product-service con arquitectura en capas (de Clase 3)
-- Docker Compose con Kafka y Zookeeper en ejecución
+- Docker Compose con Kafka en ejecución
 - Maven y Java 17 configurados
 - Postman o curl para probar endpoints
 

@@ -212,8 +212,8 @@ mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
 # Ver logs de Kafka
 docker compose logs -f kafka
 
-# Reiniciar Kafka y Zookeeper
-docker compose restart kafka zookeeper
+# Reiniciar Kafka
+docker compose restart kafka
 ```
 
 ---

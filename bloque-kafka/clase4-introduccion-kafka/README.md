@@ -8,7 +8,7 @@ Esta clase introduce Apache Kafka como plataforma de mensajería event-driven, c
 
 - Comprender la arquitectura de Apache Kafka (brokers, topics, partitions, consumer groups)
 - Entender el modelo de mensajería publish-subscribe y event-driven
-- Desplegar Kafka y Zookeeper con Docker Compose
+- Desplegar Kafka en modo KRaft con Docker Compose
 - Crear y gestionar topics usando Kafka CLI
 - Producir y consumir mensajes desde la línea de comandos
 - Explorar casos de uso reales de Kafka en diferentes industrias

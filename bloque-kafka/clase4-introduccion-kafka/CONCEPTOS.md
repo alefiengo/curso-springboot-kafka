@@ -228,25 +228,27 @@ Partition 0
 
 ---
 
-## Zookeeper vs KRaft
+## KRaft: Modo Moderno de Kafka
 
-### Zookeeper (usado en este curso)
+### KRaft (Kafka Raft) - usado en este curso
 
-- **Qué hace**: Coordina el cluster de Kafka (elección de líder, metadata, configuración)
-- **Despliegue**: Proceso separado que Kafka requiere
-- **Estabilidad**: Tecnología madura y probada en producción
+- **Qué hace**: Gestiona metadata y coordinación del cluster mediante consenso Raft
+- **Ventaja**: Elimina la dependencia de Zookeeper, simplificando la arquitectura
+- **Estado**: Production-ready desde Kafka 3.3+, modo por defecto en Kafka 4.0+
+- **Despliegue**: Un solo proceso de Kafka (no requiere servicios externos)
 
-### KRaft (Kafka Raft)
+### Zookeeper (modo tradicional - deprecado)
 
-- **Qué hace**: Reemplaza Zookeeper con quorum interno de Kafka
-- **Estado**: Producción-ready desde Kafka 3.3 (2022)
-- **Ventaja**: Simplifica arquitectura, elimina dependencia externa
+- **Qué hace**: Coordinaba el cluster de Kafka externamente
+- **Desventaja**: Requería proceso separado y mayor complejidad operacional
+- **Estado**: Siendo eliminado progresivamente (deprecated en Kafka 4.0+)
 
-**¿Por qué usamos Zookeeper en el curso?**
+**¿Por qué usamos KRaft en el curso?**
 
-- Mayor estabilidad y documentación disponible
-- Configuración más simple para entornos de aprendizaje
-- Ampliamente usado en producción actual
+- Es el futuro oficial de Kafka (Zookeeper será eliminado)
+- Arquitectura más simple y moderna
+- Mejor rendimiento y menor latencia
+- Facilita el aprendizaje con menos componentes
 
 ---
 

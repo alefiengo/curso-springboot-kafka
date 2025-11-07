@@ -306,8 +306,8 @@ ERROR o.s.k.c.DefaultKafkaProducerFactory : Failed to construct kafka producer
 # Verificar que Kafka está corriendo
 docker compose ps
 
-# Debería mostrar kafka y zookeeper "Up"
-# Si no están corriendo:
+# Debería mostrar kafka "Up"
+# Si no está corriendo:
 cd kafka-infrastructure
 docker compose up -d
 ```
