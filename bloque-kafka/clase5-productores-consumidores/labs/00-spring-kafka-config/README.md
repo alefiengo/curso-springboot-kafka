@@ -240,7 +240,6 @@ public class KafkaTestController {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Autowired
     public KafkaTestController(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
@@ -375,15 +374,21 @@ private KafkaTemplate<String, Object> kafkaTemplate; // null
 ```java
 // ❌ INCORRECTO - clase común, no es bean
 public class MyClass {
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate; // null
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    public MyClass(KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate; // null - no es bean de Spring
+    }
 }
 
 // ✅ CORRECTO - clase es bean de Spring
 @Service
 public class MyService {
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate; // inyectado
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    public MyService(KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate; // inyectado correctamente
+    }
 }
 ```
 

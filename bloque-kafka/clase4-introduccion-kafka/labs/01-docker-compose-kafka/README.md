@@ -481,7 +481,7 @@ local     kafka-infrastructure_kafka-data
 docker volume rm kafka-infrastructure_kafka-data
 ```
 
-**Diferencia con Zookeeper**: Solo 1 volumen (vs 3 con Zookeeper).
+**Ventaja de KRaft**: Solo 1 volumen necesario (arquitectura simplificada).
 
 ---
 
