@@ -46,7 +46,7 @@ Al finalizar el curso, el estudiante será capaz de:
 
 ### Bloque 2 · Apache Kafka y mensajería
 
-- **[Clase 4: Introducción a Apache Kafka](bloque-springboot/clase4-introduccion-kafka/)**
+- **[Clase 4: Introducción a Apache Kafka](bloque-kafka/clase4-introduccion-kafka/)**
   Introducción a Apache Kafka: arquitectura event-driven, brokers, topics, partitions y consumer groups. Despliegue de infraestructura con Docker Compose y comandos CLI para gestionar topics del dominio e-commerce.
 - **[Clase 5: Productores y Consumidores con Spring Kafka](bloque-kafka/clase5-productores-consumidores/)**
   Integración de `spring-kafka` en `product-service` para publicar eventos de productos. Creación de `order-service` como segundo microservicio que publica eventos de órdenes. Serialización JSON y configuración de productores con KafkaTemplate.

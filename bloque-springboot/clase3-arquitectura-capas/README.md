@@ -74,4 +74,4 @@ Antes de iniciar las prácticas revisa los **[Conceptos de la clase](CONCEPTOS.m
 - Preparar dudas sobre validaciones y manejo de errores para la sesión de Q&A.
 - Mantener actualizado el README de tu proyecto con instrucciones para ejecutar el servicio y probar errores.
 
-La Clase 4 introducirá perfiles y configuración externa, por lo que es importante dejar el servicio organizado y validado antes de continuar.
+La Clase 4 introducirá Apache Kafka y arquitectura event-driven. Más adelante (Clase 8) veremos perfiles y configuración externa, por lo que es importante dejar el servicio organizado y validado antes de continuar.
