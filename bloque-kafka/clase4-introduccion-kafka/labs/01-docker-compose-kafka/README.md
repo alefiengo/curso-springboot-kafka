@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Desplegar Apache Kafka en modo KRaft (sin Zookeeper) usando Docker Compose, creando una infraestructura local de mensajería moderna y simplificada para desarrollo y testing de microservicios event-driven.
+Desplegar Apache Kafka en modo KRaft usando Docker Compose, creando una infraestructura local de mensajería moderna y simplificada para desarrollo y testing de microservicios event-driven.
 
 ---
 
@@ -141,34 +141,21 @@ localhost:9092 (id: 1 rack: null) -> (
 
 ## Explicación detallada
 
-### Paso 1: Comprender KRaft vs Zookeeper
+### Paso 1: Comprender KRaft (modo moderno de Kafka)
 
 **¿Qué es KRaft?**
 
-KRaft (Kafka Raft) es el nuevo modo de consenso de Apache Kafka que elimina la dependencia de Zookeeper. Desde Kafka 3.3+ es production-ready y desde Kafka 4.0 será el único modo soportado.
+KRaft (Kafka Raft) es el modo de consenso moderno de Apache Kafka que gestiona metadata internamente sin dependencias externas. Desde Kafka 3.3+ es production-ready y desde Kafka 4.0 es el modo por defecto.
 
 **Ventajas de KRaft**:
 
-- Arquitectura más simple (un solo servicio en vez de dos)
-- Menos recursos (no necesita Zookeeper)
+- Arquitectura más simple (un solo servicio)
+- Menos recursos y dependencias
 - Inicio más rápido
 - Mejor escalabilidad
-- Es el futuro de Kafka
+- Modo estándar en Kafka 4.0+
 
-**Arquitectura tradicional (Zookeeper)**:
-
-```
-┌────────────┐
-│ Zookeeper  │ ← Gestiona metadata del cluster
-└────────────┘
-      ↑
-      │
-┌────────────┐
-│   Kafka    │ ← Almacena mensajes
-└────────────┘
-```
-
-**Arquitectura KRaft (moderna)**:
+**Arquitectura KRaft**:
 
 ```
 ┌────────────┐
@@ -350,8 +337,6 @@ docker compose up -d
 
 **Tiempo estimado**: 20-40 segundos en primera ejecución (descarga de imagen).
 
-**Ventaja sobre Zookeeper**: Inicio más rápido (no espera dependencias externas).
-
 ### Paso 5: Verificar servicio corriendo
 
 ```bash
@@ -397,9 +382,7 @@ Indica que el broker inició correctamente.
 [QuorumController id=1] Becoming active at epoch 1
 ```
 
-Indica que el controlador KRaft está activo.
-
-**Diferencia con Zookeeper**: NO verás logs de conexión a Zookeeper (porque no existe).
+Indica que el controlador KRaft está activo y gestionando metadata.
 
 ### Paso 7: Verificar conectividad
 
@@ -488,7 +471,7 @@ docker volume rm kafka-infrastructure_kafka-data
 ## Conceptos aprendidos
 
 - **Docker Compose V2**: Orquestación de contenedores con sintaxis YAML (sin campo `version`)
-- **KRaft**: Modo moderno de Kafka sin dependencia de Zookeeper
+- **KRaft**: Modo moderno de Kafka con metadata gestionada internamente
 - **KAFKA_PROCESS_ROLES**: Roles de nodo (broker, controller, o ambos)
 - **CLUSTER_ID**: Identificador único del cluster KRaft
 - **KAFKA_CONTROLLER_QUORUM_VOTERS**: Nodos del quorum de consenso
@@ -698,7 +681,7 @@ services:
 
 Acceder a [http://localhost:8090](http://localhost:8090) para ver UI gráfica.
 
-**Nota**: NO configurar Zookeeper (Kafka UI soporta KRaft nativamente).
+**Nota**: Kafka UI detecta y soporta KRaft automáticamente.
 
 ### Desafío 2: Configurar múltiples brokers KRaft
 
