@@ -30,7 +30,7 @@ Crea un directorio `kafka-infrastructure/` en la raíz de tu proyecto y agrega:
 
 Configuración requerida:
 
-- Zookeeper en puerto `2181`
+- Kafka en modo KRaft (sin Zookeeper)
 - Kafka en puerto `9092`
 - `KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"` (deshabilitado)
 - Volúmenes para persistencia de datos
@@ -39,7 +39,7 @@ Configuración requerida:
 **Validación**:
 
 1. Iniciar servicios: `docker compose up -d`
-2. Verificar estado: `docker compose ps` (ambos deben estar "Up")
+2. Verificar estado: `docker compose ps` (Kafka debe estar "Up")
 3. Captura de pantalla de logs: `docker compose logs kafka` mostrando inicio exitoso
 
 ### Tarea 1.2: Verificar conectividad de Kafka
@@ -273,7 +273,7 @@ Documenta todos los comandos ejecutados con breve explicación.
 
 Incluir capturas de:
 
-- Kafka y Zookeeper corriendo (`docker compose ps`)
+- Kafka corriendo (`docker compose ps`)
 - Lista de topics creados
 - Descripción de al menos 2 topics
 - Configuración de retención modificada
@@ -297,7 +297,7 @@ Responde (mínimo 250 palabras):
 | Criterio | Puntaje | Descripción |
 |----------|---------|-------------|
 | **Infraestructura (40%)** | | |
-| docker-compose.yml correcto | 15 | Zookeeper, Kafka, volúmenes |
+| docker-compose.yml correcto | 15 | Kafka en modo KRaft, volúmenes |
 | Kafka inicia correctamente | 10 | Logs muestran inicio exitoso |
 | Volúmenes configurados | 5 | Persistencia de datos |
 | Documentación | 10 | README con instrucciones claras |
@@ -354,7 +354,6 @@ kafka-ui:
   environment:
     KAFKA_CLUSTERS_0_NAME: local
     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-    KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 ```
 
 Proporciona capturas de:

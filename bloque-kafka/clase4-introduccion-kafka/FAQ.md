@@ -32,42 +32,30 @@ services:
 
 **Usar siempre**: `docker compose` (V2)
 
-### ¿Por qué Kafka no se conecta a Zookeeper?
+### ¿Por qué Kafka tarda en iniciar en modo KRaft?
 
 **Síntoma**:
 
 ```
-Connection to node -1 could not be established. Broker may not be available.
+Waiting for controller quorum to be initialized
 ```
 
-**Causas comunes**:
+**Causa**:
 
-1. **Zookeeper no está corriendo**:
+Kafka en modo KRaft necesita formatear el directorio de logs en el primer inicio.
+
+**Solución**: Esperar 30-60 segundos. Verificar logs:
 
 ```bash
-docker compose ps zookeeper
-# Si no está "Up", revisar logs
-docker compose logs zookeeper
+docker compose logs -f kafka
+# Buscar: "[KafkaRaftServer] Kafka Server started"
 ```
 
-2. **depends_on sin healthcheck**:
+Si persiste el problema, formatear manualmente:
 
-`depends_on` solo espera que el contenedor inicie, NO que el servicio esté listo.
-
-**Solución**: Agregar healthcheck:
-
-```yaml
-zookeeper:
-  healthcheck:
-    test: ["CMD", "zkServer.sh", "status"]
-    interval: 10s
-    timeout: 5s
-    retries: 5
-
-kafka:
-  depends_on:
-    zookeeper:
-      condition: service_healthy
+```bash
+docker compose down -v
+docker compose up -d
 ```
 
 ### ¿Cómo persisten los datos de Kafka entre reinicios?
@@ -200,18 +188,21 @@ Partition 0: [Broker 1 (Leader), Broker 2 (Replica), Broker 3 (Replica)]
 - **Desarrollo** (1 broker): `--replication-factor 1`
 - **Producción** (3+ brokers): `--replication-factor 3`
 
-### ¿Cuál es la diferencia entre Zookeeper y KRaft?
+### ¿Qué es KRaft y por qué no usamos Zookeeper?
 
-| Característica | Zookeeper | KRaft |
-|----------------|-----------|-------|
-| **Dependencia** | Proceso separado | Integrado en Kafka |
-| **Complejidad** | Mayor (dos sistemas) | Menor (un solo sistema) |
-| **Estabilidad** | Probado en producción | Estable desde Kafka 3.3 |
-| **Metadata** | En Zookeeper | En quorum de Kafka |
+**KRaft** (Kafka Raft Metadata): Modo de operación de Kafka sin dependencia de Zookeeper.
 
-**En este curso**: Usamos Zookeeper por estabilidad y documentación.
+| Característica | Descripción |
+|----------------|-------------|
+| **Dependencia** | Integrado en Kafka (sin procesos externos) |
+| **Complejidad** | Menor (un solo sistema) |
+| **Estabilidad** | Estable desde Kafka 3.3, producción-ready desde 3.6 |
+| **Metadata** | Almacenada en quorum de Kafka |
+| **Performance** | Mejor latencia para operaciones de metadata |
 
-**Futuro**: KRaft es el camino oficial (Zookeeper será deprecated).
+**En este curso**: Usamos KRaft por ser el estándar actual de Kafka.
+
+**Nota**: Zookeeper fue deprecated en Kafka 3.5 y será removido en Kafka 4.0.
 
 ### ¿Cómo funciona el consumer group rebalancing?
 

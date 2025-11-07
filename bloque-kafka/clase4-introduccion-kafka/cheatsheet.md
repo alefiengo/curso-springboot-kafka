@@ -259,8 +259,8 @@ partitions = throughput_requerido / throughput_por_consumidor
 # Ver logs
 docker compose logs kafka
 
-# Verificar Zookeeper
-docker compose logs zookeeper
+# Ver logs en tiempo real
+docker compose logs -f kafka
 
 # Reiniciar
 docker compose restart kafka
