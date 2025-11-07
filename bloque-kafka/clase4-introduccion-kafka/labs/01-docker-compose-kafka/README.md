@@ -9,7 +9,8 @@ Desplegar Apache Kafka en modo KRaft usando Docker Compose, creando una infraest
 ## Comandos a ejecutar
 
 ```bash
-# 1. Crear directorio para configuración de Kafka
+# 1. Navegar al directorio de trabajo y crear directorio para Kafka
+cd ~/workspace
 mkdir -p kafka-infrastructure
 cd kafka-infrastructure
 

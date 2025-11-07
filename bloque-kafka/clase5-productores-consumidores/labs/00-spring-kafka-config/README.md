@@ -9,23 +9,35 @@ Integrar la dependencia spring-kafka en el proyecto product-service existente, c
 ## Comandos a ejecutar
 
 ```bash
-# 1. Navegar al directorio del proyecto product-service
+# 0. PREREQUISITO: Verificar que Kafka y PostgreSQL están corriendo
+docker compose ps
+# Debería mostrar kafka y postgres "Up"
+# Si no están corriendo, navegar a ~/workspace/kafka-infrastructure y ejecutar:
+# docker compose up -d
+
+# 1. Verificar que la base de datos 'ecommerce' existe (creada en Clase 2)
+docker exec -it postgres psql -U postgres -c "\l" | grep ecommerce
+
+# Si no existe, crearla:
+# docker exec -it postgres psql -U postgres -c "CREATE DATABASE ecommerce;"
+
+# 2. Navegar al directorio del proyecto product-service
 # (Asume que product-service está en el directorio de trabajo de las clases 2-3)
 cd ~/workspace/product-service
 
-# 2. Editar pom.xml para agregar dependencia spring-kafka
+# 3. Editar pom.xml para agregar dependencia spring-kafka
 # (Ver sección "Desglose del comando" para el contenido exacto)
 
-# 3. Recargar dependencias Maven
+# 4. Recargar dependencias Maven
 mvn clean install
 
-# 4. Editar src/main/resources/application.yml
+# 5. Editar src/main/resources/application.yml
 # (Ver sección "Desglose del comando" para configuración)
 
-# 5. Ejecutar la aplicación para verificar que inicia sin errores
+# 6. Ejecutar la aplicación para verificar que inicia sin errores
 mvn spring-boot:run
 
-# 6. Verificar logs de inicio (buscar "KafkaProducer")
+# 7. Verificar logs de inicio (buscar "KafkaProducer")
 # Deberías ver: "Started KafkaProducerFactory"
 ```
 
@@ -156,6 +168,21 @@ spring:
 - Dirección del broker de Kafka
 - Puede ser lista: `localhost:9092,localhost:9093`
 - Producer se conecta aquí para enviar mensajes
+- Usa variable de entorno `${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}` para flexibilidad
+
+**¿Cómo configurar las variables de entorno?**
+
+```bash
+# Opción 1: Variable de entorno del sistema
+export KAFKA_BOOTSTRAP_SERVERS=localhost:9093
+mvn spring-boot:run
+
+# Opción 2: Argumento en línea de comandos
+mvn spring-boot:run -Dspring-boot.run.arguments="--spring.kafka.bootstrap-servers=localhost:9093"
+
+# Opción 3: Para Docker/Kubernetes
+docker run -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 product-service
+```
 
 **key-serializer**:
 
@@ -211,6 +238,12 @@ public class KafkaProducerConfig {
 ```
 
 **Con Spring Boot, esto NO es necesario** - la autoconfiguración lo hace por ti.
+
+**Nota sobre tipos genéricos**:
+
+- La configuración usa `KafkaTemplate<String, Object>` (genérico) porque Spring Boot no sabe qué tipo de eventos enviarás
+- En tu código, usa tipos específicos: `KafkaTemplate<String, ProductCreatedEvent>` para type-safety
+- Ambos enfoques son válidos, pero los tipos específicos previenen errores en tiempo de compilación
 
 ### Paso 5: Verificar logs de inicio
 

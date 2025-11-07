@@ -166,7 +166,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "customer_orders")
 public class Order {
 
     @Id
@@ -408,6 +408,8 @@ public class OrderService {
     public OrderResponse findById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+        // Nota: En producción, crear OrderNotFoundException extends RuntimeException
+        // Ver Clase 3 para manejo de excepciones con @ControllerAdvice
         return mapToResponse(order);
     }
 
