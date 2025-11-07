@@ -10,7 +10,7 @@ Integrar spring-kafka en order-service, crear el evento OrderPlacedEvent, implem
 
 ```bash
 # 1. Navegar al proyecto order-service
-cd order-service
+cd ~/workspace/order-service
 
 # 2. Agregar dependencia spring-kafka a pom.xml
 # (Ver sección "Desglose del comando")
@@ -471,7 +471,7 @@ cliente → recibe error 500
 **Terminal 1**: product-service
 
 ```bash
-cd product-service
+cd ~/workspace/product-service
 mvn spring-boot:run
 # Corre en puerto 8080
 ```
@@ -479,7 +479,7 @@ mvn spring-boot:run
 **Terminal 2**: order-service
 
 ```bash
-cd order-service
+cd ~/workspace/order-service
 mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
 # Corre en puerto 8081
 ```

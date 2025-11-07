@@ -9,7 +9,10 @@ Crear un segundo microservicio (order-service) desde cero usando Spring Initiali
 ## Comandos a ejecutar
 
 ```bash
-# 1. Generar proyecto con Spring Initializr (desde línea de comandos)
+# 1. Navegar al directorio de trabajo
+cd ~/workspace
+
+# 2. Generar proyecto con Spring Initializr (desde línea de comandos)
 curl https://start.spring.io/starter.zip \
   -d dependencies=web,data-jpa,postgresql,validation \
   -d groupId=dev.alefiengo \
@@ -21,36 +24,35 @@ curl https://start.spring.io/starter.zip \
   -d type=maven-project \
   -o order-service.zip
 
-# 2. Descomprimir
+# 3. Descomprimir y entrar al directorio
 unzip order-service.zip
 cd order-service
 
-# 3. Crear base de datos en PostgreSQL
+# 4. Crear base de datos en PostgreSQL
 docker exec -it postgres psql -U postgres -c "CREATE DATABASE ecommerce_orders;"
 
-# 4. Verificar base de datos creada
+# 5. Verificar base de datos creada
 docker exec -it postgres psql -U postgres -c "\l"
 
-# 5. Configurar application.yml (ver sección "Desglose del comando")
+# 6. Configurar application.yml (ver sección "Desglose del comando")
 
-# 6. Crear estructura de paquetes
+# 7. Crear estructura de paquetes
 mkdir -p src/main/java/dev/alefiengo/orderservice/model/entity
 mkdir -p src/main/java/dev/alefiengo/orderservice/model/dto
 mkdir -p src/main/java/dev/alefiengo/orderservice/repository
 mkdir -p src/main/java/dev/alefiengo/orderservice/service
 mkdir -p src/main/java/dev/alefiengo/orderservice/controller
-mkdir -p src/main/java/dev/alefiengo/orderservice/exception
 
-# 7. Crear clases Java (ver sección "Desglose del comando")
+# 8. Crear clases Java (ver sección "Desglose del comando")
 
-# 8. Compilar y ejecutar en puerto 8081
+# 9. Compilar y ejecutar en puerto 8081
 mvn clean install
 mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
 
-# 9. Verificar que funciona
+# 10. Verificar que funciona
 curl http://localhost:8081/api/orders
 
-# 10. Crear una orden de prueba
+# 11. Crear una orden de prueba
 curl -X POST http://localhost:8081/api/orders \
   -H "Content-Type: application/json" \
   -d '{

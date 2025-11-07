@@ -27,7 +27,7 @@ kafka-topics --bootstrap-server localhost:9092 --list
 exit
 
 # 5. Navegar al proyecto product-service
-cd product-service
+cd ~/workspace/product-service
 
 # 6. Crear estructura de paquetes
 mkdir -p src/main/java/dev/alefiengo/productservice/kafka/event
@@ -49,7 +49,15 @@ kafka-console-consumer --bootstrap-server localhost:9092 \
   --from-beginning \
   --property print.key=true
 
-# 11. Crear un producto vía REST
+# 11. Crear una categoría primero (si no existe)
+curl -X POST http://localhost:8080/api/categories \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Electrónica",
+    "description": "Productos electrónicos y tecnología"
+  }'
+
+# 12. Crear un producto vía REST
 curl -X POST http://localhost:8080/api/products \
   -H "Content-Type: application/json" \
   -d '{

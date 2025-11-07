@@ -10,7 +10,8 @@ Integrar la dependencia spring-kafka en el proyecto product-service existente, c
 
 ```bash
 # 1. Navegar al directorio del proyecto product-service
-cd product-service
+# (Asume que product-service está en el directorio de trabajo de las clases 2-3)
+cd ~/workspace/product-service
 
 # 2. Editar pom.xml para agregar dependencia spring-kafka
 # (Ver sección "Desglose del comando" para el contenido exacto)
@@ -60,7 +61,7 @@ Agregar al final del archivo:
 ```yaml
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -68,7 +69,7 @@ spring:
 
 | Propiedad | Valor | Descripción |
 |-----------|-------|-------------|
-| `bootstrap-servers` | `localhost:9092` | Dirección del broker de Kafka |
+| `bootstrap-servers` | `${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}` | Dirección del broker de Kafka (variable de entorno con fallback) |
 | `key-serializer` | `StringSerializer` | Convierte la clave a String |
 | `value-serializer` | `JsonSerializer` | Convierte el evento a JSON automáticamente |
 
@@ -306,8 +307,9 @@ ERROR o.s.k.c.DefaultKafkaProducerFactory : Failed to construct kafka producer
 docker compose ps
 
 # Debería mostrar kafka "Up"
-# Si no está corriendo:
-cd kafka-infrastructure
+# Si no está corriendo, navegar al directorio de infraestructura de Kafka (de Clase 4)
+# y levantar los servicios:
+cd ~/workspace/kafka-infrastructure
 docker compose up -d
 ```
 
