@@ -1,4 +1,4 @@
-# Lab 05: Kafka CLI - Crear Topics
+# Lab 02: Kafka CLI - Crear Topics
 
 ## Objetivo
 

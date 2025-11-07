@@ -1,251 +1,14 @@
-# Conceptos: Perfiles, Configuración y Apache Kafka
+# Conceptos: Apache Kafka - Arquitectura Event-Driven
 
-Esta guía cubre los conceptos fundamentales necesarios para preparar aplicaciones Spring Boot para producción y comprender la arquitectura de Apache Kafka.
-
----
-
-## Parte 1: Production-Ready Spring Boot
-
-### Spring Boot Profiles
-
-Los perfiles de Spring Boot permiten configurar la aplicación de manera diferente según el entorno de ejecución.
-
-#### ¿Qué son los perfiles?
-
-Un perfil es un conjunto de configuraciones específicas para un entorno determinado. Permiten:
-
-- Mantener una sola base de código
-- Configurar comportamiento específico por entorno
-- Cambiar entre entornos sin modificar código
-
-#### Perfiles comunes
-
-| Perfil | Uso | Características |
-|--------|-----|-----------------|
-| `dev` | Desarrollo local | Logs detallados, show-sql habilitado, base de datos local |
-| `prod` | Producción | Logs mínimos, seguridad habilitada, base de datos remota |
-| `test` | Pruebas automatizadas | Base de datos en memoria (H2), transacciones rollback |
-
-#### Estructura de archivos
-
-```
-src/main/resources/
-├── application.yml              # Configuración común
-├── application-dev.yml          # Configuración desarrollo
-└── application-prod.yml         # Configuración producción
-```
-
-#### Activación de perfiles
-
-```bash
-# Mediante Maven
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-
-# Mediante JAR
-java -jar app.jar --spring.profiles.active=prod
-
-# Variable de entorno
-export SPRING_PROFILES_ACTIVE=dev
-java -jar app.jar
-```
-
-#### Ejemplo: application-dev.yml
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/ecommerce_dev
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
-logging:
-  level:
-    dev.alefiengo: DEBUG
-    org.springframework.web: DEBUG
-```
-
-#### Ejemplo: application-prod.yml
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
-  jpa:
-    show-sql: false
-
-logging:
-  level:
-    dev.alefiengo: INFO
-    org.springframework.web: WARN
-```
+Esta guía cubre los conceptos fundamentales de Apache Kafka para comprender la arquitectura de mensajería distribuida y event-driven.
 
 ---
 
-### Spring Boot Actuator
-
-Actuator proporciona endpoints HTTP para monitorear y gestionar aplicaciones Spring Boot en producción.
-
-#### ¿Qué es Spring Boot Actuator?
-
-Un conjunto de herramientas incorporadas para:
-
-- Verificar el estado de salud de la aplicación (health checks)
-- Consultar métricas de rendimiento (memoria, CPU, requests)
-- Exponer información de la aplicación (versión, git commit)
-- Gestionar beans y configuración en tiempo de ejecución
-
-#### Dependencia necesaria
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
-```
-
-#### Endpoints principales
-
-| Endpoint | Descripción | Ejemplo de uso |
-|----------|-------------|----------------|
-| `/actuator/health` | Estado de salud | Readiness/liveness probes en Kubernetes |
-| `/actuator/info` | Información de la aplicación | Versión, git commit, build info |
-| `/actuator/metrics` | Métricas de la aplicación | jvm.memory.used, http.server.requests |
-| `/actuator/env` | Variables de entorno | Revisar configuración activa |
-| `/actuator/loggers` | Configuración de logs | Cambiar nivel de log en tiempo real |
-
-#### Configuración básica
-
-```yaml
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,env
-  endpoint:
-    health:
-      show-details: always
-```
-
-#### Health Check - Ejemplo de respuesta
-
-```json
-{
-  "status": "UP",
-  "components": {
-    "db": {
-      "status": "UP",
-      "details": {
-        "database": "PostgreSQL",
-        "validationQuery": "isValid()"
-      }
-    },
-    "diskSpace": {
-      "status": "UP",
-      "details": {
-        "total": 499963174912,
-        "free": 212055158784
-      }
-    }
-  }
-}
-```
-
-#### Métricas - Ejemplos
-
-```bash
-# Memoria JVM utilizada
-curl http://localhost:8080/actuator/metrics/jvm.memory.used
-
-# Total de requests HTTP
-curl http://localhost:8080/actuator/metrics/http.server.requests
-
-# Tiempo de respuesta promedio
-curl http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/api/products
-```
-
----
-
-### Variables de Entorno y Externalización de Configuración
-
-La externalización de configuración sigue el principio **12-Factor App** para aplicaciones cloud-native.
-
-#### ¿Por qué externalizar configuración?
-
-- **Seguridad**: Credenciales fuera del código fuente
-- **Portabilidad**: Mismo JAR en todos los entornos
-- **Flexibilidad**: Cambiar configuración sin recompilar
-- **Conformidad 12-Factor**: Estándar para aplicaciones cloud
-
-#### Patrón de fallback
-
-Spring Boot permite definir valores por defecto:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ecommerce}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
-```
-
-**Sintaxis**: `${VARIABLE:valor_por_defecto}`
-
-- Si `DB_HOST` existe como variable de entorno, usa su valor
-- Si no existe, usa `localhost`
-
-#### Configuración con Docker Compose
-
-```yaml
-services:
-  product-service:
-    image: product-service:latest
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: product_db
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      SPRING_PROFILES_ACTIVE: prod
-```
-
-#### Configuración con variables de entorno (Linux/Mac)
-
-```bash
-export DB_HOST=postgres
-export DB_PORT=5432
-export DB_NAME=product_db
-export SPRING_PROFILES_ACTIVE=prod
-
-java -jar product-service.jar
-```
-
-#### Configuración con archivo .env (desarrollo local)
-
-Crear archivo `.env` en la raíz del proyecto:
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=ecommerce_dev
-DB_USER=postgres
-DB_PASSWORD=postgres
-SPRING_PROFILES_ACTIVE=dev
-```
-
-**IMPORTANTE**: Agregar `.env` al `.gitignore` para no commitear credenciales.
-
----
-
-## Parte 2: Apache Kafka - Arquitectura Event-Driven
-
-### ¿Qué es Apache Kafka?
+## ¿Qué es Apache Kafka?
 
 Apache Kafka es una **plataforma de streaming distribuida** diseñada para manejar flujos de datos en tiempo real con alta disponibilidad, escalabilidad y tolerancia a fallos.
 
-#### Características principales
+### Características principales
 
 - **Pub/Sub**: Publicadores y suscriptores desacoplados
 - **Persistencia**: Mensajes almacenados en disco (no solo en memoria)
@@ -253,7 +16,7 @@ Apache Kafka es una **plataforma de streaming distribuida** diseñada para manej
 - **Alta disponibilidad**: Réplicas de datos entre brokers
 - **Alto rendimiento**: Millones de mensajes por segundo
 
-#### Casos de uso
+### Casos de uso
 
 - **Mensajería entre microservicios**: Comunicación asíncrona y desacoplada
 - **Event Sourcing**: Almacenar eventos como fuente de verdad
@@ -263,9 +26,9 @@ Apache Kafka es una **plataforma de streaming distribuida** diseñada para manej
 
 ---
 
-### Conceptos fundamentales de Kafka
+## Conceptos fundamentales de Kafka
 
-#### 1. Broker
+### 1. Broker
 
 Un **broker** es un servidor Kafka que:
 
@@ -283,7 +46,7 @@ Cluster de Kafka
 └─────────────────────────────────────┘
 ```
 
-#### 2. Topic
+### 2. Topic
 
 Un **topic** es un canal lógico de mensajes. Es como una tabla de base de datos o carpeta donde se almacenan eventos relacionados.
 
@@ -299,7 +62,7 @@ ecommerce.inventory.updated
 ecommerce.products.created
 ```
 
-#### 3. Partition
+### 3. Partition
 
 Cada topic se divide en **particiones** para paralelizar el procesamiento.
 
@@ -322,7 +85,7 @@ Topic: ecommerce.orders.placed
 - Mensajes con la misma clave van a la misma partición
 - Ejemplo: `orderId` como clave para mantener orden de eventos por pedido
 
-#### 4. Producer
+### 4. Producer
 
 Un **productor** es una aplicación que publica mensajes a un topic.
 
@@ -344,7 +107,7 @@ public class OrderEventProducer {
 - **Sincrónico**: Espera confirmación del broker
 - **Asíncrono con callback**: Procesa resultado cuando llega
 
-#### 5. Consumer
+### 5. Consumer
 
 Un **consumidor** es una aplicación que lee mensajes de un topic.
 
@@ -369,7 +132,7 @@ public class OrderEventConsumer {
 - **Offset tracking**: Kafka guarda la posición de lectura del consumidor
 - **At-least-once delivery**: Un mensaje puede ser procesado más de una vez
 
-#### 6. Consumer Group
+### 6. Consumer Group
 
 Un **consumer group** es un conjunto de consumidores que trabajan juntos para procesar un topic.
 
@@ -395,7 +158,7 @@ Consumer Group: inventory-service
 - Si hay 3 particiones y 5 consumidores, 2 consumidores estarán inactivos
 - Si hay 3 particiones y 2 consumidores, 1 consumidor procesará 2 particiones
 
-#### 7. Offset
+### 7. Offset
 
 El **offset** es un identificador único y secuencial de cada mensaje dentro de una partición.
 
@@ -420,9 +183,9 @@ Partition 0
 
 ---
 
-### Arquitectura de un sistema con Kafka
+## Arquitectura de un sistema con Kafka
 
-#### Flujo de mensajes
+### Flujo de mensajes
 
 ```
 ┌─────────────┐      ┌──────────────┐      ┌──────────────┐
@@ -431,7 +194,7 @@ Partition 0
 └─────────────┘      └──────────────┘      └──────────────┘
 ```
 
-#### Sistema e-commerce completo (objetivo final del curso)
+### Sistema e-commerce completo (objetivo final del curso)
 
 ```
 ┌──────────────────┐
@@ -465,15 +228,15 @@ Partition 0
 
 ---
 
-### Zookeeper vs KRaft
+## Zookeeper vs KRaft
 
-#### Zookeeper (usado en este curso)
+### Zookeeper (usado en este curso)
 
 - **Qué hace**: Coordina el cluster de Kafka (elección de líder, metadata, configuración)
 - **Despliegue**: Proceso separado que Kafka requiere
 - **Estabilidad**: Tecnología madura y probada en producción
 
-#### KRaft (Kafka Raft)
+### KRaft (Kafka Raft)
 
 - **Qué hace**: Reemplaza Zookeeper con quorum interno de Kafka
 - **Estado**: Producción-ready desde Kafka 3.3 (2022)
@@ -487,13 +250,13 @@ Partition 0
 
 ---
 
-### Event-Driven Architecture (EDA)
+## Event-Driven Architecture (EDA)
 
-#### ¿Qué es arquitectura event-driven?
+### ¿Qué es arquitectura event-driven?
 
 Un patrón arquitectónico donde los servicios se comunican mediante **eventos** en lugar de llamadas síncronas.
 
-#### Eventos vs Comandos
+### Eventos vs Comandos
 
 | Tipo | Tiempo verbal | Ejemplo | Propósito |
 |------|---------------|---------|-----------|
@@ -502,14 +265,14 @@ Un patrón arquitectónico donde los servicios se comunican mediante **eventos**
 
 En este curso usamos **eventos** (past tense).
 
-#### Ventajas de EDA
+### Ventajas de EDA
 
 - **Desacoplamiento**: Productores no conocen a consumidores
 - **Escalabilidad**: Agregar consumidores sin modificar productores
 - **Resiliencia**: Si un consumidor falla, los eventos no se pierden
 - **Auditoría**: Historia completa de eventos para troubleshooting
 
-#### Eventual Consistency
+### Eventual Consistency
 
 En sistemas distribuidos con Kafka, la consistencia es **eventual**:
 
@@ -521,9 +284,9 @@ En sistemas distribuidos con Kafka, la consistencia es **eventual**:
 
 ---
 
-### Patrones de diseño con Kafka
+## Patrones de diseño con Kafka
 
-#### 1. Domain Events
+### 1. Domain Events
 
 Eventos que representan cambios significativos en el dominio de negocio.
 
@@ -537,7 +300,7 @@ public record OrderPlacedEvent(
 ) {}
 ```
 
-#### 2. Event Sourcing (teórico)
+### 2. Event Sourcing (teórico)
 
 Almacenar eventos como fuente de verdad en lugar de estado actual.
 
@@ -551,7 +314,7 @@ Event Store:
 
 **NO implementado en el curso** por complejidad, pero se explica el concepto.
 
-#### 3. CQRS (Command Query Responsibility Segregation)
+### 3. CQRS (Command Query Responsibility Segregation)
 
 Separar modelo de escritura (commands) del modelo de lectura (queries).
 
@@ -625,10 +388,6 @@ En la Clase 5 integraremos Kafka con Spring Boot:
 
 | Término Español | English Term | Descripción |
 |-----------------|--------------|-------------|
-| Perfil | Profile | Conjunto de configuraciones por entorno |
-| Variable de entorno | Environment variable | Configuración externalizada del código |
-| Punto de acceso | Endpoint | URL HTTP para acceder a funcionalidad |
-| Observabilidad | Observability | Capacidad de monitorear estado de la aplicación |
 | Broker | Broker | Servidor Kafka que almacena y distribuye mensajes |
 | Tópico | Topic | Canal lógico de mensajes en Kafka |
 | Partición | Partition | División de un topic para paralelismo |

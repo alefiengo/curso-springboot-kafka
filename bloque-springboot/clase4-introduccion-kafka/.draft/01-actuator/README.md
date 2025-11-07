@@ -1,5 +1,9 @@
 # Lab 01: Spring Boot Actuator
 
+> **Nota**: Este laboratorio se verá en la **Clase 8** como parte de la preparación para producción. Si estás siguiendo el curso en orden, continúa con el [Lab 00: Conceptos de Kafka](../labs/00-conceptos-kafka/).
+
+---
+
 ## Objetivo
 
 Implementar Spring Boot Actuator en `product-service` para exponer endpoints de monitoreo y gestión que permitan verificar el estado de salud, métricas de rendimiento e información de la aplicación en tiempo real.

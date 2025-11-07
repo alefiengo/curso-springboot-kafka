@@ -1,4 +1,4 @@
-# Lab 04: Docker Compose para Kafka
+# Lab 01: Docker Compose para Kafka
 
 ## Objetivo
 

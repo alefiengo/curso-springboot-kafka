@@ -1,4 +1,4 @@
-# Lab 03: Conceptos de Apache Kafka
+# Lab 00: Conceptos de Apache Kafka
 
 ## Objetivo
 
@@ -8,7 +8,7 @@ Comprender la arquitectura fundamental de Apache Kafka, sus componentes principa
 
 ## Comandos a ejecutar
 
-Este lab es teórico, NO requiere comandos. Los labs siguientes (04 y 05) pondrán en práctica estos conceptos con Docker Compose y Kafka CLI.
+Este lab es teórico, NO requiere comandos. Los labs siguientes (01 y 02) pondrán en práctica estos conceptos con Docker Compose y Kafka CLI.
 
 ---
 
@@ -624,7 +624,7 @@ Read Model:
 
 ### Parte 5: Preparación para los siguientes labs
 
-En el **Lab 04** desplegaremos Kafka en modo KRaft con Docker Compose:
+En el **Lab 01** desplegaremos Kafka en modo KRaft con Docker Compose:
 
 ```yaml
 services:
@@ -639,7 +639,7 @@ services:
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
 ```
 
-En el **Lab 05** crearemos topics usando Kafka CLI:
+En el **Lab 02** crearemos topics usando Kafka CLI:
 
 ```bash
 kafka-topics --bootstrap-server localhost:9092 \

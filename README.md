@@ -46,19 +46,19 @@ Al finalizar el curso, el estudiante será capaz de:
 
 ### Bloque 2 · Apache Kafka y mensajería
 
-- **[Clase 4: Perfiles, Configuración y Apache Kafka](bloque-springboot/clase4-perfiles-kafka/)**
-  Preparación de `product-service` para producción con profiles y Spring Boot Actuator. Introducción a Apache Kafka: arquitectura, despliegue con Docker Compose y comandos CLI para crear topics del dominio e-commerce.
-- **Clase 5: Productores y Consumidores con Spring Kafka**
-  Integración de `spring-kafka` en `product-service` (eventos de productos) y creación de `order-service` como segundo microservicio que publica eventos de órdenes. Serialización JSON y configuración de productores/consumidores.
+- **[Clase 4: Introducción a Apache Kafka](bloque-springboot/clase4-introduccion-kafka/)**
+  Introducción a Apache Kafka: arquitectura event-driven, brokers, topics, partitions y consumer groups. Despliegue de infraestructura con Docker Compose y comandos CLI para gestionar topics del dominio e-commerce.
+- **[Clase 5: Productores y Consumidores con Spring Kafka](bloque-kafka/clase5-productores-consumidores/)**
+  Integración de `spring-kafka` en `product-service` para publicar eventos de productos. Creación de `order-service` como segundo microservicio que publica eventos de órdenes. Serialización JSON y configuración de productores con KafkaTemplate.
 - **Clase 6: Integración entre Microservicios**
-  Creación de `inventory-service` como tercer microservicio. Comunicación asíncrona completa: order-service publica órdenes, inventory-service valida stock y confirma/rechaza, implementando el patrón de eventos de dominio en e-commerce.
+  Creación de `inventory-service` como tercer microservicio. Implementación de consumidores con @KafkaListener. Comunicación asíncrona completa: order-service publica órdenes, inventory-service valida stock y confirma/rechaza, implementando patrones de eventos de dominio.
 
 ### Bloque 3 · Streams, seguridad y cierre
 
 - **Clase 7: Kafka Streams y Patrones Event-Driven**
-  Kafka Streams en `inventory-service` para procesamiento en tiempo real. Introducción de `analytics-service` como read model (CQRS). Patrones event-driven: CQRS implementado y Event Sourcing como concepto teórico.
-- **Clase 8: Seguridad y Observabilidad**
-  Implementación de JWT con Spring Security en los tres microservicios principales. Observabilidad avanzada con Actuator, logging estructurado y métricas. Consolidación del sistema completo y entrega del proyecto integrador.
+  Kafka Streams para procesamiento en tiempo real. Introducción de `analytics-service` como read model implementando CQRS. Patrones event-driven: agregaciones, transformaciones y Event Sourcing como concepto teórico.
+- **Clase 8: Producción, Seguridad y Consolidación**
+  Preparación para producción: perfiles de Spring Boot, Spring Boot Actuator y variables de entorno. Implementación de JWT con Spring Security. Logging estructurado y métricas. Consolidación del sistema completo y entrega del proyecto integrador.
 
 ---
 
@@ -137,10 +137,9 @@ Cada clase incluye:
 
 El material público se irá liberando progresivamente. Próximos contenidos:
 
-1. **Clase 5:** Productores y consumidores con spring-kafka. Creación de `order-service` (segundo microservicio).
-2. **Clase 6:** Integración completa. Creación de `inventory-service` (tercer microservicio) y comunicación event-driven.
-3. **Clase 7:** Kafka Streams, CQRS con `analytics-service` y patrones event-driven avanzados.
-4. **Clase 8:** Seguridad con JWT, observabilidad avanzada y proyecto integrador final.
+1. **Clase 6:** Integración completa. Creación de `inventory-service` (tercer microservicio), consumidores con @KafkaListener y comunicación event-driven completa.
+2. **Clase 7:** Kafka Streams, CQRS con `analytics-service` y patrones event-driven avanzados (agregaciones, transformaciones).
+3. **Clase 8:** Preparación para producción (perfiles, Actuator, variables de entorno), seguridad con JWT y consolidación del proyecto integrador final.
 
 Cada clase se publicará con README, laboratorios, tarea y recursos adicionales en cuanto estén listos.
 

@@ -1,5 +1,9 @@
 # Lab 00: Perfiles de Spring Boot
 
+> **Nota**: Este laboratorio se verá en la **Clase 8** como parte de la preparación para producción. Si estás siguiendo el curso en orden, continúa con el [Lab 00: Conceptos de Kafka](../labs/00-conceptos-kafka/).
+
+---
+
 ## Objetivo
 
 Configurar perfiles de Spring Boot para diferenciar el comportamiento de `product-service` entre desarrollo y producción, permitiendo usar configuraciones específicas por entorno.

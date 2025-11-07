@@ -1,5 +1,9 @@
 # Lab 02: Variables de Entorno
 
+> **Nota**: Este laboratorio se verá en la **Clase 8** como parte de la preparación para producción. Si estás siguiendo el curso en orden, continúa con el [Lab 00: Conceptos de Kafka](../labs/00-conceptos-kafka/).
+
+---
+
 ## Objetivo
 
 Externalizar la configuración de `product-service` usando variables de entorno y valores por defecto (fallback), siguiendo el principio **12-Factor App** para preparar la aplicación para despliegue en contenedores y entornos cloud.
