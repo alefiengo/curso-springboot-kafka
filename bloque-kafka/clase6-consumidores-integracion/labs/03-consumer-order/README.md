@@ -523,7 +523,8 @@ curl -X POST http://localhost:8081/api/orders \
     "productId": 1,
     "quantity": 5,
     "customerName": "Juan Perez",
-    "customerEmail": "juan@example.com"
+    "customerEmail": "juan@example.com",
+    "totalAmount": 7500.00
   }'
 ```
 
@@ -535,6 +536,7 @@ curl -X POST http://localhost:8081/api/orders \
   "quantity": 5,
   "customerName": "Juan Perez",
   "customerEmail": "juan@example.com",
+  "totalAmount": 7500.00,
   "status": "PENDING",
   "createdAt": "2025-11-08T12:10:00.123Z"
 }
@@ -581,6 +583,7 @@ curl http://localhost:8081/api/orders/1
   "quantity": 5,
   "customerName": "Juan Perez",
   "customerEmail": "juan@example.com",
+  "totalAmount": 7500.00,
   "status": "CONFIRMED",
   "createdAt": "2025-11-08T12:10:00.123Z"
 }
@@ -621,7 +624,8 @@ curl -X POST http://localhost:8081/api/orders \
     "productId": 1,
     "quantity": 1000,
     "customerName": "Maria Lopez",
-    "customerEmail": "maria@example.com"
+    "customerEmail": "maria@example.com",
+    "totalAmount": 1500000.00
   }'
 ```
 
@@ -633,6 +637,7 @@ curl -X POST http://localhost:8081/api/orders \
   "quantity": 1000,
   "customerName": "Maria Lopez",
   "customerEmail": "maria@example.com",
+  "totalAmount": 1500000.00,
   "status": "PENDING",
   "createdAt": "2025-11-08T12:15:00.123Z"
 }
@@ -676,6 +681,7 @@ curl http://localhost:8081/api/orders/2
   "quantity": 1000,
   "customerName": "Maria Lopez",
   "customerEmail": "maria@example.com",
+  "totalAmount": 1500000.00,
   "status": "CANCELLED",
   "createdAt": "2025-11-08T12:15:00.123Z"
 }
