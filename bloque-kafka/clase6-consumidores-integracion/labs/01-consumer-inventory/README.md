@@ -52,6 +52,7 @@ mkdir -p kafka/consumer
 cat > kafka/event/OrderPlacedEvent.java << 'EOF'
 package dev.alefiengo.inventoryservice.kafka.event;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
@@ -67,6 +68,7 @@ public class OrderPlacedEvent {
     private Integer quantity;
     private String customerName;
     private String customerEmail;
+    private BigDecimal totalAmount;
     private Instant timestamp;
 
     // Constructor vacío (REQUERIDO para deserialización JSON)
@@ -75,12 +77,14 @@ public class OrderPlacedEvent {
 
     // Constructor completo
     public OrderPlacedEvent(Long orderId, Long productId, Integer quantity,
-                            String customerName, String customerEmail, Instant timestamp) {
+                            String customerName, String customerEmail,
+                            BigDecimal totalAmount, Instant timestamp) {
         this.orderId = orderId;
         this.productId = productId;
         this.quantity = quantity;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
+        this.totalAmount = totalAmount;
         this.timestamp = timestamp;
     }
 
@@ -126,6 +130,14 @@ public class OrderPlacedEvent {
         this.customerEmail = customerEmail;
     }
 
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
     public Instant getTimestamp() {
         return timestamp;
     }
@@ -142,6 +154,7 @@ public class OrderPlacedEvent {
                 ", quantity=" + quantity +
                 ", customerName='" + customerName + '\'' +
                 ", customerEmail='" + customerEmail + '\'' +
+                ", totalAmount=" + totalAmount +
                 ", timestamp=" + timestamp +
                 '}';
     }
