@@ -300,14 +300,14 @@ import jakarta.validation.constraints.NotNull;
 
 public class InventoryItemRequest {
 
-    @NotNull(message = "Product ID is required")
+    @NotNull(message = "El ID del producto es requerido")
     private Long productId;
 
-    @NotBlank(message = "Product name is required")
+    @NotBlank(message = "El nombre del producto es requerido")
     private String productName;
 
-    @NotNull(message = "Initial stock is required")
-    @Min(value = 0, message = "Initial stock must be non-negative")
+    @NotNull(message = "El stock inicial es requerido")
+    @Min(value = 0, message = "El stock inicial debe ser no negativo")
     private Integer initialStock;
 
     // Constructor vacío

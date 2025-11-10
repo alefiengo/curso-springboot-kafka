@@ -260,25 +260,25 @@ import java.math.BigDecimal;
 
 public class OrderRequest {
 
-    @NotNull(message = "Product ID is required")
-    @Positive(message = "Product ID must be positive")
+    @NotNull(message = "El ID del producto es requerido")
+    @Positive(message = "El ID del producto debe ser positivo")
     private Long productId;
 
-    @NotNull(message = "Quantity is required")
-    @Positive(message = "Quantity must be positive")
-    @Max(value = 100, message = "Quantity cannot exceed 100")
+    @NotNull(message = "La cantidad es requerida")
+    @Positive(message = "La cantidad debe ser positiva")
+    @Max(value = 100, message = "La cantidad no puede exceder 100")
     private Integer quantity;
 
-    @NotBlank(message = "Customer name is required")
-    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
+    @NotBlank(message = "El nombre del cliente es requerido")
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
     private String customerName;
 
-    @NotBlank(message = "Customer email is required")
-    @Email(message = "Email must be valid")
+    @NotBlank(message = "El email del cliente es requerido")
+    @Email(message = "El email debe ser válido")
     private String customerEmail;
 
-    @NotNull(message = "Total amount is required")
-    @Positive(message = "Total amount must be positive")
+    @NotNull(message = "El monto total es requerido")
+    @Positive(message = "El monto total debe ser positivo")
     private BigDecimal totalAmount;
 
     // Getters y Setters
