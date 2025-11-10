@@ -120,6 +120,7 @@ Esta clase introduce 2 nuevos topics:
 - [Cheatsheet - Clase 6](cheatsheet.md)
 - [FAQ - Clase 6](FAQ.md)
 - [Conceptos - Clase 6](CONCEPTOS.md)
+- **[Colección Postman](recursos/postman/clase6-microservicios.postman_collection.json)** - Endpoints para probar los 3 microservicios
 - [Spring Kafka Consumers](https://docs.spring.io/spring-kafka/reference/kafka/receiving-messages/listener-annotation.html)
 - [Consumer Groups](https://kafka.apache.org/documentation/#consumergroups)
 - [Offset Management](https://kafka.apache.org/documentation/#consumerconfigs)
