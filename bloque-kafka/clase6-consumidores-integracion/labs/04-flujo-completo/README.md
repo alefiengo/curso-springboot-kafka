@@ -30,7 +30,7 @@ Integrar y probar la arquitectura completa de microservicios con Kafka, ejecutar
                                        ▲                            │
                                        │                            │
                                        └────────── Kafka ───────────┘
-                                         (5 topics activos)
+                                         (4 topics activos)
 ```
 
 ---
@@ -339,7 +339,8 @@ curl -X POST http://localhost:8081/api/orders \
     "productId": 1,
     "quantity": 5,
     "customerName": "Juan Perez",
-    "customerEmail": "juan@example.com"
+    "customerEmail": "juan@example.com",
+    "totalAmount": 7500.00
   }'
 ```
 
@@ -351,6 +352,7 @@ curl -X POST http://localhost:8081/api/orders \
   "quantity": 5,
   "customerName": "Juan Perez",
   "customerEmail": "juan@example.com",
+  "totalAmount": 7500.00,
   "status": "PENDING",
   "createdAt": "2025-11-08T13:05:00.123Z"
 }
@@ -402,6 +404,9 @@ curl http://localhost:8082/api/inventory/product/1
   "id": 1,
   "productId": 1,
   "quantity": 5,
+  "customerName": "Juan Perez",
+  "customerEmail": "juan@example.com",
+  "totalAmount": 7500.00,
   "status": "CONFIRMED",
   "createdAt": "2025-11-08T13:05:00.123Z"
 }
@@ -431,7 +436,8 @@ curl -X POST http://localhost:8081/api/orders \
     "productId": 3,
     "quantity": 10,
     "customerName": "Maria Lopez",
-    "customerEmail": "maria@example.com"
+    "customerEmail": "maria@example.com",
+    "totalAmount": 899.90
   }'
 ```
 
@@ -443,6 +449,7 @@ curl -X POST http://localhost:8081/api/orders \
   "quantity": 10,
   "customerName": "Maria Lopez",
   "customerEmail": "maria@example.com",
+  "totalAmount": 899.90,
   "status": "PENDING",
   "createdAt": "2025-11-08T13:10:00.123Z"
 }
@@ -494,6 +501,9 @@ curl http://localhost:8082/api/inventory/product/3
   "id": 2,
   "productId": 3,
   "quantity": 10,
+  "customerName": "Maria Lopez",
+  "customerEmail": "maria@example.com",
+  "totalAmount": 899.90,
   "status": "CANCELLED",
   "createdAt": "2025-11-08T13:10:00.123Z"
 }
@@ -522,27 +532,27 @@ curl http://localhost:8082/api/inventory/product/3
 # Orden 3: Mouse (10 unidades)
 curl -X POST http://localhost:8081/api/orders \
   -H "Content-Type: application/json" \
-  -d '{"productId":2,"quantity":10,"customerName":"Carlos Ruiz","customerEmail":"carlos@example.com"}'
+  -d '{"productId":2,"quantity":10,"customerName":"Carlos Ruiz","customerEmail":"carlos@example.com","totalAmount":999.90}'
 
 # Orden 4: Laptop (3 unidades)
 curl -X POST http://localhost:8081/api/orders \
   -H "Content-Type: application/json" \
-  -d '{"productId":1,"quantity":3,"customerName":"Ana Martinez","customerEmail":"ana@example.com"}'
+  -d '{"productId":1,"quantity":3,"customerName":"Ana Martinez","customerEmail":"ana@example.com","totalAmount":4500.00}'
 
 # Orden 5: Mouse (50 unidades)
 curl -X POST http://localhost:8081/api/orders \
   -H "Content-Type: application/json" \
-  -d '{"productId":2,"quantity":50,"customerName":"Pedro Gomez","customerEmail":"pedro@example.com"}'
+  -d '{"productId":2,"quantity":50,"customerName":"Pedro Gomez","customerEmail":"pedro@example.com","totalAmount":4999.50}'
 
 # Orden 6: Teclado (2 unidades - debe confirmar)
 curl -X POST http://localhost:8081/api/orders \
   -H "Content-Type: application/json" \
-  -d '{"productId":3,"quantity":2,"customerName":"Laura Diaz","customerEmail":"laura@example.com"}'
+  -d '{"productId":3,"quantity":2,"customerName":"Laura Diaz","customerEmail":"laura@example.com","totalAmount":179.98}'
 
 # Orden 7: Laptop (100 unidades - debe cancelar)
 curl -X POST http://localhost:8081/api/orders \
   -H "Content-Type: application/json" \
-  -d '{"productId":1,"quantity":100,"customerName":"Roberto Silva","customerEmail":"roberto@example.com"}'
+  -d '{"productId":1,"quantity":100,"customerName":"Roberto Silva","customerEmail":"roberto@example.com","totalAmount":150000.00}'
 ```
 
 ### Paso 21: Observar procesamiento en paralelo

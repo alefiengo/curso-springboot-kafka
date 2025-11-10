@@ -389,9 +389,37 @@ EOF
 
 **Output esperado**: Sin salida, archivo creado.
 
-### Paso 7: Agregar métodos en OrderService
+### Paso 7: Agregar campo cancellationReason a Order entity
 
-Edita `src/main/java/dev/alefiengo/orderservice/service/OrderService.java` y agrega estos métodos AL FINAL de la clase (antes del cierre `}`):
+Antes de implementar los métodos de servicio, necesitamos agregar un campo a la entidad Order para guardar la razón de cancelación.
+
+Edita `src/main/java/dev/alefiengo/orderservice/model/entity/Order.java` y agrega el siguiente campo (después del campo `status`):
+
+```java
+    @Column(name = "cancellation_reason")
+    private String cancellationReason;
+```
+
+Y agrega los métodos getter y setter (al final de la clase, antes del cierre `}`):
+
+```java
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+```
+
+**¿Por qué necesitamos este campo?**
+- Cuando una orden es cancelada por falta de stock, queremos **persistir la razón** de la cancelación (ej. "Stock insuficiente")
+- Esto permite auditoría y análisis posterior de por qué se cancelaron órdenes
+- El campo es **nullable** (no requiere @NotNull) porque solo se usa en cancelaciones
+
+### Paso 8: Agregar métodos confirmOrder y cancelOrder en OrderService
+
+Edita `src/main/java/dev/alefiengo/orderservice/service/OrderService.java` y **AGREGA** (NO reemplaces) estos dos métodos nuevos AL FINAL de la clase (después del método `createOrder`, antes del cierre `}`):
 
 ```java
     /**
@@ -437,8 +465,9 @@ Edita `src/main/java/dev/alefiengo/orderservice/service/OrderService.java` y agr
             return; // Idempotencia: Si ya fue procesada, no hacer nada
         }
 
-        // Actualizar estado
+        // Actualizar estado y guardar razón de cancelación
         order.setStatus(OrderStatus.CANCELLED);
+        order.setCancellationReason(reason);
         orderRepository.save(order);
 
         log.info("Order cancelled: orderId={}, newStatus={}, reason={}",
