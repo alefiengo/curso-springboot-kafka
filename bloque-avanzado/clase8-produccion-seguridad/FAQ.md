@@ -148,8 +148,7 @@ Verificar que el token no expiró:
 ```java
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    private UserDetailsService userDetailsService;  // Causa ciclo
+    private UserDetailsService userDetailsService;  // Evitar inyección innecesaria
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -160,13 +159,14 @@ public class SecurityConfig {
 
 **Solución**:
 
-Usar constructor injection o evitar inyección innecesaria:
+Usar constructor injection (Spring 4.3+):
 ```java
 @Configuration
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    // Constructor injection - Spring 4.3+ no requiere @Autowired
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }

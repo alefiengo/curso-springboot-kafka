@@ -77,6 +77,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: productCreatedEvent:dev.alefiengo.productservice.kafka.event.ProductCreatedEvent
 ```
 
 | Propiedad | Valor | Descripción |
@@ -84,6 +86,7 @@ spring:
 | `bootstrap-servers` | `${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}` | Dirección del broker de Kafka (variable de entorno con fallback) |
 | `key-serializer` | `StringSerializer` | Convierte la clave a String |
 | `value-serializer` | `JsonSerializer` | Convierte el evento a JSON automáticamente |
+| `spring.json.type.mapping` | `productCreatedEvent:{full.package}` | **CRÍTICO**: Mapea el nombre del evento al tipo Java para deserialización en consumers |
 
 **JsonSerializer vs StringSerializer**:
 

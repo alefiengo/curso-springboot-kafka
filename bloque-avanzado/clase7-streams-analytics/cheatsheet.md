@@ -215,7 +215,7 @@ public class AnalyticsQueryService {
 
     private final StreamsBuilderFactoryBean factoryBean;
 
-    @Autowired
+    // Constructor injection - no requiere @Autowired
     public AnalyticsQueryService(StreamsBuilderFactoryBean factoryBean) {
         this.factoryBean = factoryBean;
     }

@@ -134,7 +134,7 @@ docker exec -it kafka kafka-console-consumer \
 ┌─────────────────────────────────────────────────────────────────┐
 │                        INFRAESTRUCTURA                          │
 ├─────────────────────────────────────────────────────────────────┤
-│  PostgreSQL (5432)  │  Zookeeper (2181)  │  Kafka (9092)       │
+│         PostgreSQL (5432)         │      Kafka (9092)           │
 └─────────────────────────────────────────────────────────────────┘
                                  │
         ┌────────────────────────┼────────────────────────┐
@@ -170,7 +170,7 @@ docker exec -it kafka kafka-console-consumer \
 #### Infraestructura
 
 - [ ] PostgreSQL corriendo y accesible
-- [ ] Kafka corriendo con Zookeeper
+- [ ] Kafka corriendo (modo KRaft)
 - [ ] 5 topics creados en Kafka
 - [ ] Bases de datos creadas (ecommerce, ecommerce_orders, ecommerce_inventory)
 

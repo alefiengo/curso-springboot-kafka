@@ -13,7 +13,7 @@ Crear el cuarto microservicio (`analytics-service`) con dependencia `kafka-strea
 ```bash
 # Generar proyecto con Spring Initializr
 curl https://start.spring.io/starter.zip \
-  -d dependencies=web,kafka-streams \
+  -d dependencies=web,kafka,kafka-streams \
   -d groupId=dev.alefiengo \
   -d artifactId=analytics-service \
   -d name=AnalyticsService \
@@ -47,7 +47,7 @@ State transition from CREATED to RUNNING
 
 | Parámetro | Descripción |
 |-----------|-------------|
-| `dependencies=web,kafka-streams` | Incluye `spring-boot-starter-web` y `kafka-streams` |
+| `dependencies=web,kafka,kafka-streams` | Incluye `spring-boot-starter-web`, `spring-kafka` y `kafka-streams` |
 | `groupId=dev.alefiengo` | Identificador del grupo (estándar del curso) |
 | `artifactId=analytics-service` | Nombre del artefacto (JAR generado) |
 | `name=AnalyticsService` | Nombre de la clase principal |

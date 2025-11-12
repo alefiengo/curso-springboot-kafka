@@ -389,8 +389,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class InventoryHealthIndicator implements HealthIndicator {
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
+    private final InventoryRepository inventoryRepository;
+
+    // Constructor injection - Spring 4.3+ no requiere @Autowired
+    public InventoryHealthIndicator(InventoryRepository inventoryRepository) {
+        this.inventoryRepository = inventoryRepository;
+    }
 
     @Override
     public Health health() {

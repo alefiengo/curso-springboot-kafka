@@ -59,6 +59,8 @@ cat >> application.yml << 'EOF'
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmedEvent:dev.alefiengo.inventoryservice.kafka.event.OrderConfirmedEvent,orderCancelledEvent:dev.alefiengo.inventoryservice.kafka.event.OrderCancelledEvent
 EOF
 ```
 
@@ -82,6 +84,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmedEvent:dev.alefiengo.inventoryservice.kafka.event.OrderConfirmedEvent,orderCancelledEvent:dev.alefiengo.inventoryservice.kafka.event.OrderCancelledEvent
 ```
 
 ### Paso 3: Crear OrderConfirmedEvent
@@ -1092,8 +1096,13 @@ Registrar métricas de:
 
 **Pistas**:
 ```java
-@Autowired
-private MeterRegistry meterRegistry;
+// Inyectar en constructor (no usar @Autowired en fields)
+private final MeterRegistry meterRegistry;
+
+public InventoryService(InventoryRepository repository, MeterRegistry meterRegistry) {
+    this.inventoryRepository = repository;
+    this.meterRegistry = meterRegistry;
+}
 
 public void processOrderPlaced(...) {
     Timer.Sample sample = Timer.start(meterRegistry);

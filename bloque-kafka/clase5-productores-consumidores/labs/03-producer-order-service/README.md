@@ -97,9 +97,11 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderPlacedEvent:dev.alefiengo.orderservice.kafka.event.OrderPlacedEvent
 ```
 
-**Nota**: Configuración idéntica a product-service. En ambos casos usamos JsonSerializer.
+**IMPORTANTE**: El `type.mapping` es CRÍTICO. Sin esto, el consumer recibirá String plano y fallará con `MessageConversionException`.
 
 ### 3. Evento OrderPlacedEvent
 

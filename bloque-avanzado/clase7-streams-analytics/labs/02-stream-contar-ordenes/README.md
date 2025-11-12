@@ -197,7 +197,6 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Service;
 
@@ -206,7 +205,7 @@ public class AnalyticsQueryService {
 
     private final StreamsBuilderFactoryBean factoryBean;
 
-    @Autowired
+    // Constructor injection - Spring 4.3+ no requiere @Autowired
     public AnalyticsQueryService(StreamsBuilderFactoryBean factoryBean) {
         this.factoryBean = factoryBean;
     }
@@ -261,7 +260,6 @@ package dev.alefiengo.analyticsservice.controller;
 
 import dev.alefiengo.analyticsservice.model.dto.OrderStatsResponse;
 import dev.alefiengo.analyticsservice.service.AnalyticsQueryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -273,7 +271,7 @@ public class AnalyticsController {
 
     private final AnalyticsQueryService queryService;
 
-    @Autowired
+    // Constructor injection - Spring 4.3+ no requiere @Autowired
     public AnalyticsController(AnalyticsQueryService queryService) {
         this.queryService = queryService;
     }
@@ -413,7 +411,35 @@ serde.configure(Map.of(
 ), false);
 ```
 
-### Problema 4: Contador no se actualiza
+### Problema 4: Warning "Could not autowire StreamsBuilderFactoryBean"
+
+**Warning del IDE**:
+```
+Could not autowire. No beans of 'StreamsBuilderFactoryBean' type found.
+```
+
+**Causa**:
+1. El IDE no detecta el bean porque es creado automáticamente por Spring Boot al tener `kafka-streams` en el classpath
+2. El warning es falso - el bean SÍ existe en runtime
+
+**Solución**:
+- **Ignorar el warning** - el código compilará y funcionará correctamente
+- Asegurarse de que `pom.xml` incluye AMBAS dependencias:
+  ```xml
+  <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+  </dependency>
+  <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-streams</artifactId>
+  </dependency>
+  ```
+- Spring Boot autoconfigura `StreamsBuilderFactoryBean` cuando detecta `kafka-streams` en classpath
+
+**Nota**: NO es necesario `@Autowired` en constructores (Spring 4.3+).
+
+### Problema 5: Contador no se actualiza
 
 **Error**: El contador siempre muestra 0 o valor antiguo.
 
