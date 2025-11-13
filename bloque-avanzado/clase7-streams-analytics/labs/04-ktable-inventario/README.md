@@ -76,11 +76,13 @@ curl http://localhost:8083/api/analytics/inventory/low-stock?threshold=10
 
 ### 4.1 Prerequisito: Modificar inventory-service
 
-**IMPORTANTE**: Antes de crear el KTable, debemos modificar `inventory-service` para publicar eventos de inventario.
+**IMPORTANTE**: Antes de crear el KTable, debemos modificar `inventory-service` (del Bloque Kafka, Clase 6) para publicar eventos de inventario.
+
+**Ruta del proyecto**: `~/workspace/inventory-service/` (o donde hayas creado inventory-service en Clase 6)
 
 #### 4.1.1 Crear InventoryUpdatedEvent.java en inventory-service
 
-Crea `src/main/java/dev/alefiengo/inventoryservice/kafka/event/InventoryUpdatedEvent.java`:
+Navega al proyecto inventory-service y crea `src/main/java/dev/alefiengo/inventoryservice/kafka/event/InventoryUpdatedEvent.java`:
 
 ```java
 package dev.alefiengo.inventoryservice.kafka.event;
@@ -234,48 +236,54 @@ Crea `src/main/java/dev/alefiengo/analyticsservice/streams/InventoryReadModelStr
 ```java
 package dev.alefiengo.analyticsservice.streams;
 
+import dev.alefiengo.analyticsservice.config.SerdeFactory;
 import dev.alefiengo.analyticsservice.model.event.InventoryUpdatedEvent;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.state.Stores;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-import java.util.Map;
-
 @Configuration
 public class InventoryReadModelStream {
 
-    @Bean
-    public KTable<String, InventoryUpdatedEvent> inventoryTable(StreamsBuilder builder) {
-        // KTable (NO KStream) - solo interesa último estado por productId
-        KTable<String, InventoryUpdatedEvent> table = builder.table(
-            "ecommerce.inventory.updated",
-            Consumed.with(Serdes.String(), jsonSerde(InventoryUpdatedEvent.class)),
-            Materialized.as("inventory-read-model-store")
-        );
+    private final SerdeFactory serdeFactory;
 
-        return table;
+    public InventoryReadModelStream(SerdeFactory serdeFactory) {
+        this.serdeFactory = serdeFactory;
     }
 
-    private static <T> JsonSerde<T> jsonSerde(Class<T> targetClass) {
-        JsonSerde<T> serde = new JsonSerde<>(targetClass);
-        serde.configure(Map.of(
-            "spring.json.trusted.packages", "dev.alefiengo.*"
-        ), false);
-        return serde;
+    @Bean
+    public KTable<String, InventoryUpdatedEvent> inventoryTable(StreamsBuilder builder) {
+        JsonSerde<InventoryUpdatedEvent> inventorySerde =
+            serdeFactory.jsonSerde(InventoryUpdatedEvent.class);
+
+        return builder.table(
+            "ecommerce.inventory.updated",
+            Consumed.with(Serdes.String(), inventorySerde),
+            Materialized.<String, InventoryUpdatedEvent>as(
+                    Stores.inMemoryKeyValueStore("inventory-read-model-store"))
+                .withKeySerde(Serdes.String())
+                .withValueSerde(inventorySerde)
+        );
     }
 }
 ```
 
-**Punto crítico**: `builder.table()` crea un **KTable** (NO `builder.stream()`):
+**Puntos críticos**:
 
-- Solo retiene el **último valor por key** (productId)
-- Ideal para **estado actual** (no historial)
-- Se sincroniza automáticamente con Kafka
+1. **Constructor injection con `SerdeFactory`**: Reutiliza el factory centralizado.
+2. **`builder.table()`** crea un **KTable** (NO `builder.stream()`):
+   - Solo retiene el **último valor por key** (productId)
+   - Ideal para **estado actual** (no historial)
+   - Se sincroniza automáticamente con topic compactado
+3. **`Stores.inMemoryKeyValueStore()`**: State store en memoria explícito.
+4. **`Materialized.<String, InventoryUpdatedEvent>as(...)`**: Tipos genéricos explícitos.
+5. **`.withValueSerde(inventorySerde)`**: Usa el mismo serde para value (reutilización).
 
 ### 4.5 Crear InventoryItemResponse.java
 
