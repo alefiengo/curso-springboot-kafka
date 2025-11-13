@@ -76,77 +76,91 @@ Crea `src/main/java/dev/alefiengo/analyticsservice/streams/OrderAnalyticsStream.
 ```java
 package dev.alefiengo.analyticsservice.streams;
 
-import dev.alefiengo.analyticsservice.model.event.OrderConfirmedEvent;
+import dev.alefiengo.analyticsservice.config.SerdeFactory;
 import dev.alefiengo.analyticsservice.model.event.OrderCancelledEvent;
+import dev.alefiengo.analyticsservice.model.event.OrderConfirmedEvent;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Grouped;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.state.Stores;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-import java.util.Map;
-
 @Configuration
 public class OrderAnalyticsStream {
 
+    private final SerdeFactory serdeFactory;
+
+    public OrderAnalyticsStream(SerdeFactory serdeFactory) {
+        this.serdeFactory = serdeFactory;
+    }
+
     @Bean
     public KStream<String, OrderConfirmedEvent> orderConfirmedStream(StreamsBuilder builder) {
-        // 1. Leer stream desde topic
+        JsonSerde<OrderConfirmedEvent> orderConfirmedSerde =
+            serdeFactory.jsonSerde(OrderConfirmedEvent.class);
+
         KStream<String, OrderConfirmedEvent> stream = builder.stream(
             "ecommerce.orders.confirmed",
-            Consumed.with(Serdes.String(), jsonSerde(OrderConfirmedEvent.class))
+            Consumed.with(Serdes.String(), orderConfirmedSerde)
         );
 
-        // 2. Agrupar todos los eventos bajo una key común
-        KGroupedStream<String, OrderConfirmedEvent> grouped = stream
-            .groupBy(
-                (key, value) -> "confirmed",  // Todos van a key "confirmed"
-                Grouped.with(Serdes.String(), jsonSerde(OrderConfirmedEvent.class))
+        stream.groupBy(
+                (key, value) -> "confirmed",
+                Grouped.with(Serdes.String(), orderConfirmedSerde)
+            )
+            .count(
+                Materialized.<String, Long>as(
+                        Stores.inMemoryKeyValueStore("order-confirmed-count-store"))
+                    .withKeySerde(Serdes.String())
+                    .withValueSerde(Serdes.Long())
             );
-
-        // 3. Contar eventos
-        KTable<String, Long> countTable = grouped.count(
-            Materialized.as("order-confirmed-count-store")
-        );
 
         return stream;
     }
 
     @Bean
     public KStream<String, OrderCancelledEvent> orderCancelledStream(StreamsBuilder builder) {
+        JsonSerde<OrderCancelledEvent> orderCancelledSerde =
+            serdeFactory.jsonSerde(OrderCancelledEvent.class);
+
         KStream<String, OrderCancelledEvent> stream = builder.stream(
             "ecommerce.orders.cancelled",
-            Consumed.with(Serdes.String(), jsonSerde(OrderCancelledEvent.class))
+            Consumed.with(Serdes.String(), orderCancelledSerde)
         );
 
         stream
             .groupBy(
                 (key, value) -> "cancelled",
-                Grouped.with(Serdes.String(), jsonSerde(OrderCancelledEvent.class))
+                Grouped.with(Serdes.String(), orderCancelledSerde)
             )
-            .count(Materialized.as("order-cancelled-count-store"));
+            .count(
+                Materialized.<String, Long>as(
+                        Stores.inMemoryKeyValueStore("order-cancelled-count-store"))
+                    .withKeySerde(Serdes.String())
+                    .withValueSerde(Serdes.Long())
+            );
 
         return stream;
-    }
-
-    private static <T> JsonSerde<T> jsonSerde(Class<T> targetClass) {
-        JsonSerde<T> serde = new JsonSerde<>(targetClass);
-        serde.configure(Map.of(
-            "spring.json.trusted.packages", "dev.alefiengo.*"
-        ), false);
-        return serde;
     }
 }
 ```
 
 **Puntos críticos**:
 
-1. **`builder.stream()`**: Crea un KStream desde el topic.
-2. **`groupBy((key, value) -> "confirmed")`**: Agrupa TODOS los eventos bajo una sola key ("confirmed"). Esto permite contar todos los eventos juntos.
-3. **`count()`**: Operación stateful que crea un state store automáticamente.
-4. **`Materialized.as("order-confirmed-count-store")`**: Nombra el state store para poder consultarlo después.
-5. **`jsonSerde()`**: Configura JsonSerde con `trusted.packages` para deserializar eventos JSON.
+1. **Constructor injection con `SerdeFactory`**: Inyecta el factory centralizado creado en Lab 01.
+2. **`serdeFactory.jsonSerde(OrderConfirmedEvent.class)`**: Crea JsonSerde con configuración desde `application.yml`.
+3. **`builder.stream()`**: Crea un KStream desde el topic.
+4. **`groupBy((key, value) -> "confirmed")`**: Agrupa TODOS los eventos bajo una sola key ("confirmed"). Esto permite contar todos los eventos juntos.
+5. **`count()`**: Operación stateful que crea un state store automáticamente.
+6. **`Stores.inMemoryKeyValueStore("order-confirmed-count-store")`**: Crea state store en memoria explícitamente.
+7. **`Materialized.<String, Long>as(...)`**: Define tipos genéricos explícitos (String key, Long value).
+8. **`.withKeySerde()` / `.withValueSerde()`**: Especifica serializadores explícitos para el state store.
+9. **NO usamos método estático `jsonSerde()`**: Configuración viene de `SerdeFactory` component.
 
 ### 4.2 Crear OrderStatsResponse.java
 
@@ -195,48 +209,71 @@ package dev.alefiengo.analyticsservice.service;
 import dev.alefiengo.analyticsservice.model.dto.OrderStatsResponse;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StoreQueryParameters;
+import org.apache.kafka.streams.errors.InvalidStateStoreException;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AnalyticsQueryService {
 
     private final StreamsBuilderFactoryBean factoryBean;
 
-    // Constructor injection - Spring 4.3+ no requiere @Autowired
     public AnalyticsQueryService(StreamsBuilderFactoryBean factoryBean) {
         this.factoryBean = factoryBean;
     }
 
     public OrderStatsResponse getOrderStats() {
+        KafkaStreams kafkaStreams = requireKafkaStreams();
+
+        try {
+            ReadOnlyKeyValueStore<String, Long> confirmedStore =
+                kafkaStreams.store(
+                    StoreQueryParameters.fromNameAndType(
+                        "order-confirmed-count-store",
+                        QueryableStoreTypes.keyValueStore()
+                    )
+                );
+
+            ReadOnlyKeyValueStore<String, Long> cancelledStore =
+                kafkaStreams.store(
+                    StoreQueryParameters.fromNameAndType(
+                        "order-cancelled-count-store",
+                        QueryableStoreTypes.keyValueStore()
+                    )
+                );
+
+            Long confirmedCount = confirmedStore.get("confirmed");
+            Long cancelledCount = cancelledStore.get("cancelled");
+
+            return new OrderStatsResponse(
+                confirmedCount != null ? confirmedCount : 0L,
+                cancelledCount != null ? cancelledCount : 0L
+            );
+        } catch (InvalidStateStoreException ex) {
+            throw stateStoreUnavailable(ex);
+        }
+    }
+
+    private KafkaStreams requireKafkaStreams() {
         KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
-
-        // Consultar state store de órdenes confirmadas
-        ReadOnlyKeyValueStore<String, Long> confirmedStore =
-            kafkaStreams.store(
-                StoreQueryParameters.fromNameAndType(
-                    "order-confirmed-count-store",
-                    QueryableStoreTypes.keyValueStore()
-                )
+        if (kafkaStreams == null || !kafkaStreams.state().isRunningOrRebalancing()) {
+            throw new ResponseStatusException(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "Kafka Streams no está listo para procesar consultas"
             );
+        }
+        return kafkaStreams;
+    }
 
-        // Consultar state store de órdenes canceladas
-        ReadOnlyKeyValueStore<String, Long> cancelledStore =
-            kafkaStreams.store(
-                StoreQueryParameters.fromNameAndType(
-                    "order-cancelled-count-store",
-                    QueryableStoreTypes.keyValueStore()
-                )
-            );
-
-        Long confirmedCount = confirmedStore.get("confirmed");
-        Long cancelledCount = cancelledStore.get("cancelled");
-
-        return new OrderStatsResponse(
-            confirmedCount != null ? confirmedCount : 0L,
-            cancelledCount != null ? cancelledCount : 0L
+    private ResponseStatusException stateStoreUnavailable(RuntimeException cause) {
+        return new ResponseStatusException(
+            HttpStatus.SERVICE_UNAVAILABLE,
+            "Las stores locales aún no están disponibles",
+            cause
         );
     }
 }
@@ -244,12 +281,20 @@ public class AnalyticsQueryService {
 
 **Puntos críticos**:
 
-1. **`StreamsBuilderFactoryBean`**: Inyectado por Spring, da acceso a la instancia de KafkaStreams.
-2. **`factoryBean.getKafkaStreams()`**: Obtiene la instancia de KafkaStreams.
-3. **`kafkaStreams.store()`**: Consulta un state store por nombre.
-4. **`StoreQueryParameters.fromNameAndType()`**: Especifica nombre y tipo de store.
-5. **`confirmedStore.get("confirmed")`**: Consulta el contador por key.
-6. **Validación de null**: Si la key no existe, retorna 0L.
+1. **`requireKafkaStreams()`**: Método privado que valida que Kafka Streams esté en estado RUNNING antes de consultar stores.
+2. **`kafkaStreams.state().isRunningOrRebalancing()`**: Verifica que el estado sea RUNNING o REBALANCING (estados válidos para queries).
+3. **`ResponseStatusException` con HTTP 503**: Retorna error HTTP si Streams no está listo.
+4. **`try-catch InvalidStateStoreException`**: Captura errores cuando stores no están disponibles.
+5. **`stateStoreUnavailable()`**: Método helper para respuestas HTTP 503 consistentes.
+6. **`StoreQueryParameters.fromNameAndType()`**: Especifica nombre y tipo de store.
+7. **`confirmedStore.get("confirmed")`**: Consulta el contador por key.
+8. **Validación de null**: Si la key no existe, retorna 0L (operador ternario).
+
+**Ventajas del diseño robusto**:
+- Evita `NullPointerException` si `kafkaStreams` es null
+- Retorna HTTP 503 (Service Unavailable) en lugar de HTTP 500 (Internal Server Error)
+- Cliente puede reintentar automáticamente con backoff
+- Logs claros sobre el estado del servicio
 
 ### 4.4 Crear AnalyticsController.java
 

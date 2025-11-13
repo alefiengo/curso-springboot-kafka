@@ -315,7 +315,103 @@ public class OrderCancelledEvent {
 
 **IMPORTANTE**: Las clases de eventos deben ser **exactamente iguales** a las de `order-service` e `inventory-service` para que la deserialización funcione correctamente.
 
-### 4.5 Compilar y ejecutar
+### 4.5 Crear SerdeFactory.java (Configuración centralizada)
+
+Crea `src/main/java/dev/alefiengo/analyticsservice/config/SerdeFactory.java`:
+
+```java
+package dev.alefiengo.analyticsservice.config;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.support.serializer.JsonSerde;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+@Component
+public class SerdeFactory {
+
+    private final Map<String, Object> serdeConfig;
+
+    public SerdeFactory(
+        @Value("${spring.kafka.streams.properties.spring.json.trusted.packages:*}")
+        String trustedPackages,
+        @Value("${spring.kafka.streams.properties.spring.json.type.mapping:}")
+        String typeMappings
+    ) {
+        this.serdeConfig = new HashMap<>();
+        serdeConfig.put("spring.json.trusted.packages", trustedPackages);
+        serdeConfig.put("spring.json.use.type.headers", false);
+        if (StringUtils.hasText(typeMappings)) {
+            serdeConfig.put("spring.json.type.mapping", typeMappings);
+        }
+    }
+
+    public <T> JsonSerde<T> jsonSerde(Class<T> targetClass) {
+        JsonSerde<T> serde = new JsonSerde<>(targetClass);
+        serde.configure(serdeConfig, false);
+        return serde;
+    }
+}
+```
+
+**Puntos críticos**:
+
+1. **`@Component`**: Spring administra esta clase como bean singleton.
+2. **`@Value`**: Inyecta configuración desde `application.yml`.
+3. **`serdeConfig`**: Map con configuración reutilizable para todos los serdes.
+4. **`spring.json.trusted.packages`**: Necesario para deserializar JSON (seguridad).
+5. **`spring.json.type.mapping`**: Mapeo de nombres de eventos a clases Java.
+6. **`spring.json.use.type.headers: false`**: Usa type mapping en lugar de headers.
+7. **Método genérico `jsonSerde()`**: Crea JsonSerde para cualquier clase.
+
+**Ventajas de centralizar**:
+- Configuración única en `application.yml`
+- No repetir `trusted.packages` en cada stream
+- Fácil mantenimiento y testing
+
+### 4.6 Actualizar application.yml
+
+Actualiza `src/main/resources/application.yml` con la configuración completa:
+
+```yaml
+spring:
+  application:
+    name: analytics-service
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    streams:
+      application-id: analytics-service
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        spring.json.trusted.packages: dev.alefiengo.analyticsservice.model.event,dev.alefiengo.*
+        spring.json.type.mapping: orderConfirmedEvent:dev.alefiengo.analyticsservice.model.event.OrderConfirmedEvent,orderCancelledEvent:dev.alefiengo.analyticsservice.model.event.OrderCancelledEvent,inventoryUpdatedEvent:dev.alefiengo.analyticsservice.model.event.InventoryUpdatedEvent
+
+server:
+  port: 8083
+
+logging:
+  level:
+    dev.alefiengo: INFO
+    org.apache.kafka.streams: INFO
+```
+
+**Puntos críticos**:
+
+1. **`application-id: analytics-service`**: Identifica el consumer group de Kafka Streams.
+2. **`default.key.serde` / `default.value.serde`**: Serializadores por defecto (String).
+3. **`spring.json.trusted.packages`**: Paquetes permitidos para deserialización JSON.
+4. **`spring.json.type.mapping`**: Mapeo completo de TODOS los eventos que consumirás.
+   - Formato: `nombreEvento:paquete.completo.Clase`
+   - Separados por comas (sin espacios)
+5. **`server.port: 8083`**: Puerto REST diferente de order-service (8081) e inventory-service (8082).
+
+**CRÍTICO**: El `type.mapping` debe incluir TODOS los eventos que consumas en los streams. Si falta uno, fallará la deserialización.
+
+### 4.7 Compilar y ejecutar
 
 ```bash
 mvn clean install
