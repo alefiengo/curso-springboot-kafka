@@ -89,66 +89,65 @@ Crea `src/main/java/dev/alefiengo/analyticsservice/streams/ProductAnalyticsStrea
 ```java
 package dev.alefiengo.analyticsservice.streams;
 
+import dev.alefiengo.analyticsservice.config.SerdeFactory;
 import dev.alefiengo.analyticsservice.model.event.OrderConfirmedEvent;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Grouped;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.state.Stores;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-import java.util.Map;
-
 @Configuration
 public class ProductAnalyticsStream {
 
-    @Bean
-    public KStream<String, OrderConfirmedEvent> productSalesStream(StreamsBuilder builder) {
-        // 1. Leer stream de órdenes confirmadas
-        KStream<String, OrderConfirmedEvent> stream = builder.stream(
-            "ecommerce.orders.confirmed",
-            Consumed.with(Serdes.String(), jsonSerde(OrderConfirmedEvent.class))
-        );
+    private final SerdeFactory serdeFactory;
 
-        // 2. Re-key: key actual es orderId → cambiar a productId
-        KStream<String, Integer> rekeyed = stream
-            .selectKey((orderId, event) -> event.getProductId().toString())
-            .mapValues(event -> event.getQuantity());
-
-        // 3. Agrupar por productId
-        KGroupedStream<String, Integer> grouped = rekeyed
-            .groupByKey(Grouped.with(Serdes.String(), Serdes.Integer()));
-
-        // 4. Sumar cantidades vendidas por producto
-        KTable<String, Integer> salesTable = grouped.reduce(
-            Integer::sum,  // (oldValue, newValue) -> oldValue + newValue
-            Materialized.as("product-sales-store")
-        );
-
-        return stream;
+    public ProductAnalyticsStream(SerdeFactory serdeFactory) {
+        this.serdeFactory = serdeFactory;
     }
 
-    private static <T> JsonSerde<T> jsonSerde(Class<T> targetClass) {
-        JsonSerde<T> serde = new JsonSerde<>(targetClass);
-        serde.configure(Map.of(
-            "spring.json.trusted.packages", "dev.alefiengo.*"
-        ), false);
-        return serde;
+    @Bean
+    public KStream<String, OrderConfirmedEvent> productSalesStream(StreamsBuilder builder) {
+        JsonSerde<OrderConfirmedEvent> orderConfirmedSerde =
+            serdeFactory.jsonSerde(OrderConfirmedEvent.class);
+
+        KStream<String, OrderConfirmedEvent> stream = builder.stream(
+            "ecommerce.orders.confirmed",
+            Consumed.with(Serdes.String(), orderConfirmedSerde)
+        );
+
+        stream
+            .selectKey((orderId, event) -> event.getProductId().toString())
+            .mapValues(OrderConfirmedEvent::getQuantity)
+            .groupByKey(Grouped.with(Serdes.String(), Serdes.Integer()))
+            .reduce(
+                Integer::sum,
+                Materialized.<String, Integer>as(
+                        Stores.inMemoryKeyValueStore("product-sales-store"))
+                    .withKeySerde(Serdes.String())
+                    .withValueSerde(Serdes.Integer())
+            );
+
+        return stream;
     }
 }
 ```
 
 **Puntos críticos**:
 
-1. **`selectKey((orderId, event) -> event.getProductId().toString())`**: **Re-keying** - Cambia la key del mensaje de `orderId` a `productId`. Esto es necesario para agrupar por producto.
-
-2. **`mapValues(event -> event.getQuantity())`**: Transforma el value de `OrderConfirmedEvent` a `Integer` (solo la cantidad).
-
-3. **`groupByKey()`**: Agrupa por la nueva key (`productId`).
-
-4. **`reduce(Integer::sum, ...)`**: Agrega valores sumándolos. Equivalente a `(oldValue, newValue) -> oldValue + newValue`.
-
-5. **`Materialized.as("product-sales-store")`**: Nombra el state store.
+1. **Constructor injection con `SerdeFactory`**: Reutiliza el factory centralizado.
+2. **`selectKey((orderId, event) -> event.getProductId().toString())`**: **Re-keying** - Cambia la key del mensaje de `orderId` a `productId`. Esto es necesario para agrupar por producto.
+3. **`mapValues(OrderConfirmedEvent::getQuantity)`**: Method reference que transforma el value de `OrderConfirmedEvent` a `Integer` (solo la cantidad).
+4. **`groupByKey()`**: Agrupa por la nueva key (`productId`).
+5. **`reduce(Integer::sum, ...)`**: Agrega valores sumándolos. Equivalente a `(oldValue, newValue) -> oldValue + newValue`.
+6. **`Stores.inMemoryKeyValueStore("product-sales-store")`**: State store en memoria explícito.
+7. **`Materialized.<String, Integer>as(...)`**: Tipos genéricos explícitos (String productId, Integer quantity).
+8. **`.withKeySerde()` / `.withValueSerde()`**: Serializadores explícitos para el state store.
 
 ### 4.2 Crear ProductStatsResponse.java
 
@@ -199,47 +198,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public List<ProductStatsResponse> getTopProducts() {
-    KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
-
-    ReadOnlyKeyValueStore<String, Integer> store =
-        kafkaStreams.store(
-            StoreQueryParameters.fromNameAndType(
-                "product-sales-store",
-                QueryableStoreTypes.keyValueStore()
-            )
-        );
-
-    List<ProductStatsResponse> products = new ArrayList<>();
-
-    // Iterar sobre todos los productos
-    KeyValueIterator<String, Integer> iterator = store.all();
+    KafkaStreams kafkaStreams = requireKafkaStreams();
 
     try {
-        while (iterator.hasNext()) {
-            KeyValue<String, Integer> entry = iterator.next();
-            products.add(new ProductStatsResponse(
-                Long.parseLong(entry.key),
-                entry.value
-            ));
+        ReadOnlyKeyValueStore<String, Integer> store =
+            kafkaStreams.store(
+                StoreQueryParameters.fromNameAndType(
+                    "product-sales-store",
+                    QueryableStoreTypes.keyValueStore()
+                )
+            );
+
+        List<ProductStatsResponse> products = new ArrayList<>();
+
+        try (KeyValueIterator<String, Integer> iterator = store.all()) {
+            while (iterator.hasNext()) {
+                KeyValue<String, Integer> entry = iterator.next();
+                products.add(new ProductStatsResponse(
+                    Long.parseLong(entry.key),
+                    entry.value
+                ));
+            }
         }
-    } finally {
-        iterator.close();  // IMPORTANTE: Cerrar iterator
+
+        products.sort((a, b) -> Integer.compare(b.getTotalSold(), a.getTotalSold()));
+
+        return products;
+    } catch (InvalidStateStoreException ex) {
+        throw stateStoreUnavailable(ex);
     }
-
-    // Ordenar por cantidad vendida (descendente)
-    products.sort((a, b) -> Integer.compare(b.getTotalSold(), a.getTotalSold()));
-
-    return products;
 }
 ```
 
 **Puntos críticos**:
 
-1. **`store.all()`**: Itera TODOS los registros del state store.
-2. **`KeyValueIterator`**: Iterator que permite recorrer el state store.
-3. **`iterator.close()`**: **SIEMPRE cerrar iterator** para evitar memory leaks. Usamos `try-finally` para garantizar cierre.
-4. **`Long.parseLong(entry.key)`**: Convertir key (String) a Long (productId).
-5. **Ordenamiento en memoria**: Kafka Streams NO ordena, lo hacemos en Java con `List.sort()`.
+1. **`requireKafkaStreams()`**: Valida que Kafka Streams esté RUNNING antes de consultar (método definido en Lab 02).
+2. **`try-catch InvalidStateStoreException`**: Manejo robusto de errores cuando store no está disponible.
+3. **`try-with-resources`**: Cierra automáticamente el iterator (evita memory leaks).
+4. **`store.all()`**: Itera TODOS los registros del state store.
+5. **`Long.parseLong(entry.key)`**: Convertir key (String) a Long (productId).
+   - **ASUME que todas las keys son numéricas** (válido porque re-keying usa `productId.toString()`)
+   - Si hubiera keys no numéricas, usar try-catch para `NumberFormatException`
+6. **Ordenamiento en memoria**: Kafka Streams NO ordena, lo hacemos en Java con `List.sort()`.
+7. **Reutiliza `stateStoreUnavailable()`**: Método helper definido en Lab 02.
 
 ### 4.4 Actualizar AnalyticsController.java
 
