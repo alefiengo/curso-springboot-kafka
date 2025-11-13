@@ -132,6 +132,10 @@ curl -s http://localhost:8083/api/analytics/inventory/low-stock?threshold=20 | j
 echo -e "\n✓ Validación completa"
 ```
 
+**Nota sobre jq**: El comando `jq '.'` formatea el JSON para mejor lectura. Si no tienes `jq` instalado:
+- **Opción 1 (recomendado)**: Instalar jq → `sudo apt install jq` (Linux) o `brew install jq` (Mac)
+- **Opción 2**: Remover `| jq '.'` de los comandos curl (la salida será JSON sin formato pero funcional)
+
 **Ejecutar**:
 
 ```bash
