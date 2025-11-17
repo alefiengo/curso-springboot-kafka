@@ -17,7 +17,7 @@ Todo el puntaje se toma **del repositorio público** (GitHub/GitLab). Si la docu
 | 5 | Bases de datos y modelos | 10 | 3 bases separadas, entidades/documentación actualizada |
 | 6 | Configuración / variables | 10 | `application.yml` con fallbacks, perfiles y uso de env vars |
 
-> **Regla de oro**: si un evaluador no puede seguir tu README para levantar y probar el sistema, no puede asignar el puntaje completo.
+> **Regla de oro**: si no puedo seguir tu README para levantar y probar el sistema, no puedo asignar el puntaje completo.
 
 ---
 
@@ -25,7 +25,7 @@ Todo el puntaje se toma **del repositorio público** (GitHub/GitLab). Si la docu
 
 - **Duración**: 1 semana.
 - **Entrega**: link al repositorio en Moodle que contiene el README con instrucciones.
-- **Revisión**: clonamos el repo, seguimos tu guía, verificamos Postman y Kafka.Los 3 servicios deben compilar (`mvn clean install`) y correr (`mvn spring-boot:run`) sin errores.
+- **Revisión**: clono el repo, sigo tu guía y verifico Postman y Kafka. Los 3 servicios deben compilar (`mvn clean install`) y correr (`mvn spring-boot:run`) sin errores.
 
 Checklist express:
 
